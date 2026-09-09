@@ -11,26 +11,15 @@ return new class extends Migration
         Schema::create('teachers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('subject');
             $table->string('email')->unique();
-            $table->string('phone');
+            $table->string('phone')->nullable();
+            $table->string('subject')->nullable();
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-    // Beddel kan:
-
-
-// U beddel kan:
-Schema::createIfNotExists('teachers', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('subject');
-            $table->string('email')->unique();
-            $table->string('phone');
-            $table->timestamps();
-        });
+        Schema::dropIfExists('teachers');
     }
 };

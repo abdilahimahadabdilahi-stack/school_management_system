@@ -80,9 +80,20 @@
             <li>
                 <a href="{{ route('staff.index') }}"><i class="fa-solid fa-users me-2"></i> Staff</a>
             </li>
+            <li>
+                <a href="{{ route('attendance.index') }}"><i class="fa-solid fa-clipboard-user me-2"></i> Attendance</a>
+            </li>
             <hr class="dropdown-divider bg-secondary my-3 mx-3">
             <li>
                 <a href="#"><i class="fa-solid fa-gear me-2"></i> Settings</a>
+            </li>
+            <li class="mt-3 px-3">
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-danger w-100 fw-bold text-start">
+                        <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+                    </button>
+                </form>
             </li>
         </ul>
     </nav>
@@ -94,7 +105,7 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-white rounded shadow-sm mb-4 px-3">
             <div class="container-fluid">
                 <span class="navbar-text fw-semibold text-secondary">
-                    Welcome back, <strong>Admin</strong>
+                    Welcome back, <strong>{{ Auth::user()->name ?? 'Admin' }}</strong>
                 </span>
                 <div class="d-flex align-items-center">
                     <span class="badge bg-light text-dark border p-2"><i class="fa-regular fa-calendar me-1"></i> {{ date('Y-m-d') }}</span>
@@ -173,19 +184,24 @@
         <!-- Quick Actions -->
         <h5 class="fw-bold mb-3 text-secondary"><i class="fa-solid fa-bolt me-2"></i>Quick Actions</h5>
         <div class="row g-3">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <a href="{{ route('students.create') }}" class="btn btn-outline-primary w-100 py-3 fw-bold shadow-sm">
                     <i class="fa-solid fa-plus-circle me-2"></i> Add New Student
                 </a>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <a href="{{ route('teachers.create') }}" class="btn btn-outline-success w-100 py-3 fw-bold shadow-sm">
                     <i class="fa-solid fa-plus-circle me-2"></i> Add New Teacher
                 </a>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <a href="{{ route('staff.create') }}" class="btn btn-outline-warning w-100 py-3 fw-bold shadow-sm">
                     <i class="fa-solid fa-plus-circle me-2"></i> Add New Staff
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ route('attendance.index') }}" class="btn btn-outline-dark w-100 py-3 fw-bold shadow-sm">
+                    <i class="fa-solid fa-clipboard-user me-2"></i> Mark Attendance
                 </a>
             </div>
         </div>

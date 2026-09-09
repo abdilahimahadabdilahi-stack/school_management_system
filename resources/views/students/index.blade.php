@@ -27,6 +27,7 @@
                 <th>Age</th>
                 <th>Email</th>
                 <th>Class</th>
+                <th>Subject</th> <!-- Tiirka Cusub -->
                 <th class="text-center">Actions</th>
             </tr>
         </thead>
@@ -37,7 +38,8 @@
                     <td>{{ $student->name }}</td>
                     <td>{{ $student->age }}</td>
                     <td>{{ $student->email }}</td>
-                    <td>{{ $student->class_name }}</td> <!-- Halkan ka eeg: class_name ayaa loo beddelay -->
+                    <td>{{ $student->class_name }}</td>
+                    <td>{{ $student->subject ?? 'N/A' }}</td> <!-- Muujinta Maaddada -->
                     <td class="text-center">
                         <a href="{{ route('students.show', $student->id) }}" class="btn btn-info btn-sm text-white" title="View">
                             <i class="fa-solid fa-eye"></i>
@@ -58,7 +60,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="text-center">Lama helin wax arday ah.</td>
+                    <td colspan="7" class="text-center">Lama helin wax arday ah.</td>
                 </tr>
             @endforelse
         </tbody>

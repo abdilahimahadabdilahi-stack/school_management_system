@@ -3,29 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Student</title>
+    <title>Edit Student Info</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-light p-4">
+<body class="bg-light p-5">
 
 <div class="container" style="max-width: 600px;">
     <div class="card shadow-sm">
         <div class="card-header bg-warning text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Edit Student Info</h4>
+            <h4 class="m-0 fw-bold">Edit Student Info</h4>
             <a href="{{ route('students.index') }}" class="btn btn-sm btn-light">Back</a>
         </div>
-        <div class="card-body">
-
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
+        <div class="card-body p-4">
             <form action="{{ route('students.update', $student->id) }}" method="POST">
                 @csrf
                 @method('PUT')
@@ -47,12 +36,17 @@
 
                 <div class="mb-3">
                     <label class="form-label">Class</label>
-                    <input type="text" name="class" class="form-control" value="{{ old('class', $student->class) }}" required>
+                    <input type="text" name="class_name" class="form-control" value="{{ old('class_name', $student->class_name) }}" required>
                 </div>
 
-                <button type="submit" class="btn btn-warning text-white w-100">Update Student</button>
-            </form>
+                <!-- Input-ka Subject oo la soo kordhiyay -->
+                <div class="mb-3">
+                    <label class="form-label">Subject</label>
+                    <input type="text" name="subject" class="form-control" value="{{ old('subject', $student->subject) }}" placeholder="E.g. Mathematics">
+                </div>
 
+                <button type="submit" class="btn btn-warning w-100 fw-bold text-white py-2">Update Student</button>
+            </form>
         </div>
     </div>
 </div>

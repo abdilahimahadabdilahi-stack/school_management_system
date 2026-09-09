@@ -6,52 +6,65 @@
     <title>Add New Student</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-light p-4">
+<body class="bg-light p-5">
 
 <div class="container" style="max-width: 600px;">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Add New Student</h4>
+            <h4 class="m-0 fw-bold">Add New Student</h4>
             <a href="{{ route('students.index') }}" class="btn btn-sm btn-light">Back</a>
         </div>
-        <div class="card-body">
-            
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
+        <div class="card-body p-4">
             <form action="{{ route('students.store') }}" method="POST">
                 @csrf
                 
+                <!-- Full Name -->
                 <div class="mb-3">
                     <label class="form-label">Full Name</label>
-                    <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
+                    <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
+                    @error('name')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
+                <!-- Age -->
                 <div class="mb-3">
                     <label class="form-label">Age</label>
-                    <input type="number" name="age" class="form-control" value="{{ old('age') }}" required>
+                    <input type="number" name="age" class="form-control @error('age') is-invalid @enderror" value="{{ old('age') }}" required>
+                    @error('age')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
+                <!-- Email -->
                 <div class="mb-3">
                     <label class="form-label">Email</label>
-                    <input type="email" name="email" class="form-control" value="{{ old('email') }}" required>
+                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
+                    @error('email')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
+                <!-- Class -->
                 <div class="mb-3">
                     <label class="form-label">Class</label>
-                    <input type="text" name="class" class="form-control" value="{{ old('class') }}" required>
+                    <input type="text" name="class_name" class="form-control @error('class_name') is-invalid @enderror" value="{{ old('class_name') }}" required>
+                    @error('class_name')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100">Save Student</button>
-            </form>
+                <!-- Subject -->
+                <div class="mb-3">
+                    <label class="form-label">Subject</label>
+                    <input type="text" name="subject" class="form-control @error('subject') is-invalid @enderror" value="{{ old('subject') }}" placeholder="E.g. Mathematics">
+                    @error('subject')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
 
+                <button type="submit" class="btn btn-primary w-100 fw-bold py-2">Save Student</button>
+            </form>
         </div>
     </div>
 </div>

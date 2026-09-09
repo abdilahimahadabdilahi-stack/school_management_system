@@ -22,13 +22,19 @@ class StudentController extends Controller
 
     // 3. Keydi ardayga cusub
     public function store(Request $request)
-    {
-        $request->validate([
-            'name'  => 'required|string|max:255',
-            'age'   => 'required|integer',
-            'email' => 'required|email|unique:students,email',
-            'class' => 'required|string|max:255',
-        ]);
+{
+    $request->validate([
+        'name'       => 'required|string|max:255',
+        'age'        => 'required|integer',
+        'email'      => 'required|email|unique:students,email',
+        'class_name' => 'required|string|max:255',
+        'subject'    => 'nullable|string|max:255',
+    ]);
+
+    Student::create($request->all());
+
+    return redirect()->route('students.index')->with('success', 'Student added successfully!');
+
 
         Student::create([
             'name'       => $request->name,
