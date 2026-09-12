@@ -2,19 +2,19 @@
 
 namespace Database\Seeders;
 
+use App\Models\Student;
+use App\Models\Teacher;
+use App\Models\Staff;
+use App\Models\Attendance;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        $this->call([
-            StudentSeeder::class,
-            TeacherSeeder::class,
-            StaffSeeder::class,
-        ]);
+        Student::factory(30)->create();
+        Teacher::factory(10)->create();
+        Staff::factory(10)->create();
+      
     }
 }

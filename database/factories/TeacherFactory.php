@@ -2,26 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Teacher;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends Factory<Teacher>
- */
 class TeacherFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'subject' => fake()->randomElement(['Mathematics', 'English', 'Physics', 'Chemistry', 'Biology', 'History']),
-            'email' => fake()->unique()->safeEmail(),
-            'phone' => fake()->phoneNumber(),
+            'name'    => $this->faker->name(),
+            'email'   => $this->faker->unique()->safeEmail(),
+            'phone'   => $this->faker->phoneNumber(),
+            'subject' => $this->faker->randomElement(['Mathematics', 'English', 'Physics', 'Programming']),
         ];
     }
 }
