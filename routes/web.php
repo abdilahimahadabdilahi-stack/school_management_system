@@ -6,26 +6,36 @@ use Illuminate\Http\Request;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Staff;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\StaffController;
+use App\Http\Controllers\AttendanceController;
 
-// 1. Dashboard Page
-Route::get('/', function () {
-    return view('welcome', [
-        'students_count' => Student::count(),
-        'teachers_count' => Teacher::count(),
-        'staff_count'    => Staff::count(),
-    ]);
-})->name('dashboard');
+// Auth Routes (Login, Register, Password Reset)
+if (file_exists(__DIR__.'/auth.php')) {
+    require __DIR__.'/auth.php';
+}
 
-// 2. Resource Routes (Students, Teachers, Staff, Attendance)
-Route::resource('students', App\Http\Controllers\StudentController::class)->names('students');
-Route::resource('teachers', App\Http\Controllers\TeacherController::class)->names('teachers');
-Route::resource('staff', App\Http\Controllers\StaffController::class)->names('staff');
-Route::resource('attendance', App\Http\Controllers\AttendanceController::class)->names('attendance');
+// Protected Routes (LOGIN OO KALIYA AYAA GELI KARA)
+Route::middleware(['auth'])->group(function () {
 
-// 3. Logout Route
-Route::post('/logout', function (Request $request) {
-    Auth::logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-    return redirect('/');
-})->name('logout');
+    Route::get('/', function () {
+        return view('welcome', [
+            'students_count' => Student::count(),
+            'teachers_count' => Teacher::count(),
+            'staff_count'    => Staff::count(),
+        ]);
+    })->name('dashboard');
+
+    Route::resource('students', StudentController::class);
+    Route::resource('teachers', TeacherController::class);
+    Route::resource('staff', StaffController::class);
+    Route::resource('attendance', AttendanceController::class);
+
+    Route::post('/logout', function (Request $request) {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login');
+    })->name('logout');
+});

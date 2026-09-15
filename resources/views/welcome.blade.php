@@ -69,7 +69,7 @@
 
         <ul class="list-unstyled components">
             <li class="active">
-                <a href="/"><i class="fa-solid fa-gauge me-2"></i> Dashboard</a>
+                <a href="{{ route('dashboard') }}"><i class="fa-solid fa-gauge me-2"></i> Dashboard</a>
             </li>
             <li>
                 <a href="{{ route('students.index') }}"><i class="fa-solid fa-user-graduate me-2"></i> Students</a>
@@ -87,6 +87,8 @@
             <li>
                 <a href="#"><i class="fa-solid fa-gear me-2"></i> Settings</a>
             </li>
+
+            @auth
             <li class="mt-3 px-3">
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
@@ -95,6 +97,7 @@
                     </button>
                 </form>
             </li>
+            @endauth
         </ul>
     </nav>
 
@@ -103,12 +106,38 @@
         
         <!-- Top Navbar -->
         <nav class="navbar navbar-expand-lg navbar-light bg-white rounded shadow-sm mb-4 px-3">
-            <div class="container-fluid">
-                <span class="navbar-text fw-semibold text-secondary">
-                    Welcome back, <strong>{{ Auth::user()->name ?? 'Admin' }}</strong>
-                </span>
-                <div class="d-flex align-items-center">
-                    <span class="badge bg-light text-dark border p-2"><i class="fa-regular fa-calendar me-1"></i> {{ date('Y-m-d') }}</span>
+            <div class="container-fluid justify-content-between">
+                <div>
+                    @auth
+                        <span class="navbar-text fw-semibold text-secondary">
+                            Welcome back, <strong>{{ Auth::user()->name }}</strong>
+                        </span>
+                    @else
+                        <span class="navbar-text fw-semibold text-secondary">
+                            Welcome to <strong>SchoolSMS</strong>
+                        </span>
+                    @endauth
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-light text-dark border p-2 me-2">
+                        <i class="fa-regular fa-calendar me-1"></i> {{ date('Y-m-d') }}
+                    </span>
+
+                    <!-- Auth buttons for Guest Users -->
+                    @guest
+                        @if (Route::has('login'))
+                            <a href="{{ route('login') }}" class="btn btn-sm btn-outline-primary fw-bold">
+                                <i class="fa-solid fa-right-to-bracket me-1"></i> Log in
+                            </a>
+                        @endif
+
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}" class="btn btn-sm btn-primary fw-bold">
+                                <i class="fa-solid fa-user-plus me-1"></i> Register
+                            </a>
+                        @endif
+                    @endguest
                 </div>
             </div>
         </nav>
@@ -200,7 +229,7 @@
                 </a>
             </div>
             <div class="col-md-3">
-                <a href="{{ route('attendance.index') }}" class="btn btn-outline-dark w-100 py-3 fw-bold shadow-sm">
+                <a href="{{ route('attendance.create') }}" class="btn btn-outline-dark w-100 py-3 fw-bold shadow-sm">
                     <i class="fa-solid fa-clipboard-user me-2"></i> Mark Attendance
                 </a>
             </div>
