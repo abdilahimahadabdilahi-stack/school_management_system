@@ -1,77 +1,314 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('School Management Dashboard') }}
-        </h2>
-    </x-slot>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Management System - Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+        }
+        /* Sidebar Styling */
+        #sidebar {
+            min-width: 250px;
+            max-width: 250px;
+            min-height: 100vh;
+            background: #212529;
+            color: #fff;
+            transition: all 0.3s;
+        }
+        #sidebar .sidebar-header {
+            padding: 20px;
+            background: #1b1e21;
+        }
+        #sidebar ul.components {
+            padding: 20px 0;
+        }
+        #sidebar ul li a {
+            padding: 12px 20px;
+            font-size: 1.05em;
+            display: block;
+            color: #adb5bd;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        #sidebar ul li a:hover, #sidebar ul li.active > a {
+            color: #fff;
+            background: #0d6efd;
+        }
+        /* Main Content Styling */
+        #content {
+            width: 100%;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .stat-card {
+            border: none;
+            border-radius: 10px;
+            transition: transform 0.2s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+<div class="d-flex">
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header d-flex align-items-center justify-content-between">
+            <h4 class="m-0 fw-bold text-primary"><i class="fa-solid fa-graduation-cap me-2"></i>SchoolSMS</h4>
+        </div>
 
-            <!-- Welcome Banner -->
-            <div class="bg-blue-600 rounded-lg shadow-md p-6 text-white">
-                <h3 class="text-2xl font-bold">School Management Dashboard</h3>
-                <p class="text-blue-100 mt-1">Ku maamul xogta ardayda, macallimiinta, iyo shaqalaha hab toos ah.</p>
+        <ul class="list-unstyled components">
+            <li class="active">
+                <a href="{{ route('dashboard') }}"><i class="fa-solid fa-gauge me-2"></i> Dashboard</a>
+            </li>
+            <li>
+                <a href="{{ route('students.index') }}"><i class="fa-solid fa-user-graduate me-2"></i> Students</a>
+            </li>
+            <li>
+                <a href="{{ route('teachers.index') }}"><i class="fa-solid fa-chalkboard-user me-2"></i> Teachers</a>
+            </li>
+            <li>
+                <a href="{{ route('staff.index') }}"><i class="fa-solid fa-users me-2"></i> Staff</a>
+            </li>
+            <li>
+                <a href="{{ route('managers.index') }}"><i class="fa-solid fa-user-tie me-2"></i> Managers</a>
+            </li>
+            <li>
+                <a href="{{ route('attendance.index') }}"><i class="fa-solid fa-clipboard-user me-2"></i> Attendance</a>
+            </li>
+            <li>
+                <a href="{{ route('exams.index') }}"><i class="fa-solid fa-file-pen me-2"></i> Exams</a>
+            </li>
+            <li>
+                <a href="{{ route('reports.index') }}"><i class="fa-solid fa-chart-column me-2"></i> Reports</a>
+            </li>
+            <hr class="dropdown-divider bg-secondary my-3 mx-3">
+            <li>
+                <a href="#"><i class="fa-solid fa-gear me-2"></i> Settings</a>
+            </li>
+
+            @auth
+            <li class="mt-3 px-3">
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-danger w-100 fw-bold text-start">
+                        <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+                    </button>
+                </form>
+            </li>
+            @endauth
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div id="content">
+        
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white rounded shadow-sm mb-4 px-3">
+            <div class="container-fluid justify-content-between">
+                <div>
+                    @auth
+                        <span class="navbar-text fw-semibold text-secondary">
+                            Welcome back, <strong>{{ Auth::user()->name }}</strong>
+                        </span>
+                    @else
+                        <span class="navbar-text fw-semibold text-secondary">
+                            Welcome to <strong>SchoolSMS</strong>
+                        </span>
+                    @endauth
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-light text-dark border p-2 me-2">
+                        <i class="fa-regular fa-calendar me-1"></i> {{ date('Y-m-d') }}
+                    </span>
+
+                    <!-- Auth buttons for Guest Users -->
+                    @guest
+                        @if (Route::has('login'))
+                            <a href="{{ route('login') }}" class="btn btn-sm btn-outline-primary fw-bold">
+                                <i class="fa-solid fa-right-to-bracket me-1"></i> Log in
+                            </a>
+                        @endif
+
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}" class="btn btn-sm btn-primary fw-bold">
+                                <i class="fa-solid fa-user-plus me-1"></i> Register
+                            </a>
+                        @endif
+                    @endguest
+                </div>
+            </div>
+        </nav>
+
+        <!-- Welcome Banner -->
+        <div class="p-4 mb-4 text-white rounded shadow-sm d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);">
+            <div>
+                <h2 class="fw-bold m-0">School Management Dashboard</h2>
+                <p class="m-0 mt-1 opacity-75">Ku maamul xogta ardayda, macallimiinta, shaqaalaha, maamulayaasha, imtixaanaadka iyo warbixinnada hab toos ah.</p>
+            </div>
+            <div class="d-none d-md-block fs-1">
+                <i class="fa-solid fa-school text-white-50"></i>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <h5 class="fw-bold mb-3 text-secondary"><i class="fa-solid fa-chart-pie me-2"></i>General Overview</h5>
+        <div class="row g-4 mb-4">
+            
+            <!-- Students Count -->
+            <div class="col-md-3">
+                <div class="card stat-card shadow-sm bg-white p-3 border-start border-primary border-5">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small">Total Students</span>
+                            <h2 class="fw-bold text-primary m-0 mt-1">{{ $students_count ?? 0 }}</h2>
+                        </div>
+                        <div class="bg-primary text-white p-3 rounded-circle">
+                            <i class="fa-solid fa-user-graduate fs-4"></i>
+                        </div>
+                    </div>
+                    <hr class="my-2 text-muted">
+                    <a href="{{ route('students.index') }}" class="text-primary text-decoration-none small fw-bold">View List <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                </div>
             </div>
 
-            <!-- General Overview Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Total Students -->
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500">Total Students</p>
-                        <h4 class="text-3xl font-bold text-gray-800 mt-1">{{ $students_count ?? 0 }}</h4>
-                        <a href="{{ route('students.index') }}" class="text-blue-600 hover:underline text-sm font-semibold mt-2 inline-block">View List &rarr;</a>
+            <!-- Teachers Count -->
+            <div class="col-md-3">
+                <div class="card stat-card shadow-sm bg-white p-3 border-start border-success border-5">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small">Total Teachers</span>
+                            <h2 class="fw-bold text-success m-0 mt-1">{{ $teachers_count ?? 0 }}</h2>
+                        </div>
+                        <div class="bg-success text-white p-3 rounded-circle">
+                            <i class="fa-solid fa-chalkboard-user fs-4"></i>
+                        </div>
                     </div>
-                    <div class="p-3 bg-blue-500 rounded-full text-white">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
-                    </div>
-                </div>
-
-                <!-- Total Teachers -->
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500">Total Teachers</p>
-                        <h4 class="text-3xl font-bold text-gray-800 mt-1">{{ $teachers_count ?? 0 }}</h4>
-                        <a href="{{ route('teachers.index') }}" class="text-green-600 hover:underline text-sm font-semibold mt-2 inline-block">View List &rarr;</a>
-                    </div>
-                    <div class="p-3 bg-green-500 rounded-full text-white">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
-                    </div>
-                </div>
-
-                <!-- Total Staff -->
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500">Total Staff</p>
-                        <h4 class="text-3xl font-bold text-gray-800 mt-1">{{ $staff_count ?? 0 }}</h4>
-                        <a href="{{ route('staff.index') }}" class="text-yellow-600 hover:underline text-sm font-semibold mt-2 inline-block">View List &rarr;</a>
-                    </div>
-                    <div class="p-3 bg-yellow-500 rounded-full text-white">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    </div>
+                    <hr class="my-2 text-muted">
+                    <a href="{{ route('teachers.index') }}" class="text-success text-decoration-none small fw-bold">View List <i class="fa-solid fa-arrow-right ms-1"></i></a>
                 </div>
             </div>
 
-            <!-- Quick Actions -->
-            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                <h4 class="text-lg font-bold text-gray-700 mb-4">⚡ Quick Actions</h4>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                    <a href="{{ route('students.create') }}" class="flex items-center justify-center gap-2 p-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 font-semibold border border-blue-200">
-                        + Add New Student
-                    </a>
-                    <a href="{{ route('teachers.create') }}" class="flex items-center justify-center gap-2 p-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 font-semibold border border-green-200">
-                        + Add New Teacher
-                    </a>
-                    <a href="{{ route('staff.create') }}" class="flex items-center justify-center gap-2 p-3 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-yellow-100 font-semibold border border-yellow-200">
-                        + Add New Staff
-                    </a>
-                    <a href="{{ route('attendance.create') }}" class="flex items-center justify-center gap-2 p-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-200 font-semibold border border-gray-300">
-                        📋 Mark Attendance
-                    </a>
+            <!-- Staff Count -->
+            <div class="col-md-3">
+                <div class="card stat-card shadow-sm bg-white p-3 border-start border-warning border-5">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small">Total Staff</span>
+                            <h2 class="fw-bold text-warning m-0 mt-1">{{ $staff_count ?? 0 }}</h2>
+                        </div>
+                        <div class="bg-warning text-white p-3 rounded-circle">
+                            <i class="fa-solid fa-users fs-4"></i>
+                        </div>
+                    </div>
+                    <hr class="my-2 text-muted">
+                    <a href="{{ route('staff.index') }}" class="text-warning text-decoration-none small fw-bold">View List <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+
+            <!-- Managers Count -->
+            <div class="col-md-3">
+                <div class="card stat-card shadow-sm bg-white p-3 border-start border-info border-5">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small">Total Managers</span>
+                            <h2 class="fw-bold text-info m-0 mt-1">{{ $managers_count ?? 0 }}</h2>
+                        </div>
+                        <div class="bg-info text-white p-3 rounded-circle">
+                            <i class="fa-solid fa-user-tie fs-4"></i>
+                        </div>
+                    </div>
+                    <hr class="my-2 text-muted">
+                    <a href="{{ route('managers.index') }}" class="text-info text-decoration-none small fw-bold">View List <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+
+            <!-- Exams Count -->
+            <div class="col-md-3">
+                <div class="card stat-card shadow-sm bg-white p-3 border-start border-danger border-5">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small">Total Exams</span>
+                            <h2 class="fw-bold text-danger m-0 mt-1">{{ $exams_count ?? 0 }}</h2>
+                        </div>
+                        <div class="bg-danger text-white p-3 rounded-circle">
+                            <i class="fa-solid fa-file-pen fs-4"></i>
+                        </div>
+                    </div>
+                    <hr class="my-2 text-muted">
+                    <a href="{{ route('exams.index') }}" class="text-danger text-decoration-none small fw-bold">View List <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+
+            <!-- Reports Count -->
+            <div class="col-md-3">
+                <div class="card stat-card shadow-sm bg-white p-3 border-start border-dark border-5">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small">Total Reports</span>
+                            <h2 class="fw-bold text-dark m-0 mt-1">{{ $reports_count ?? 0 }}</h2>
+                        </div>
+                        <div class="bg-dark text-white p-3 rounded-circle">
+                            <i class="fa-solid fa-chart-column fs-4"></i>
+                        </div>
+                    </div>
+                    <hr class="my-2 text-muted">
+                    <a href="{{ route('reports.index') }}" class="text-dark text-decoration-none small fw-bold">View Reports <i class="fa-solid fa-arrow-right ms-1"></i></a>
                 </div>
             </div>
 
         </div>
+
+        <!-- Quick Actions -->
+        <h5 class="fw-bold mb-3 text-secondary"><i class="fa-solid fa-bolt me-2"></i>Quick Actions</h5>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <a href="{{ route('students.create') }}" class="btn btn-outline-primary w-100 py-3 fw-bold shadow-sm">
+                    <i class="fa-solid fa-plus-circle me-2"></i> Add New Student
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ route('teachers.create') }}" class="btn btn-outline-success w-100 py-3 fw-bold shadow-sm">
+                    <i class="fa-solid fa-plus-circle me-2"></i> Add New Teacher
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ route('staff.create') }}" class="btn btn-outline-warning w-100 py-3 fw-bold shadow-sm">
+                    <i class="fa-solid fa-plus-circle me-2"></i> Add New Staff
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ route('managers.create') }}" class="btn btn-outline-info w-100 py-3 fw-bold shadow-sm">
+                    <i class="fa-solid fa-plus-circle me-2"></i> Add New Manager
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ route('exams.create') }}" class="btn btn-outline-danger w-100 py-3 fw-bold shadow-sm">
+                    <i class="fa-solid fa-plus-circle me-2"></i> Add New Exam
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ route('reports.create') }}" class="btn btn-outline-dark w-100 py-3 fw-bold shadow-sm">
+                    <i class="fa-solid fa-file-export me-2"></i> Generate Report
+                </a>
+            </div>
+        </div>
+
     </div>
-</x-app-layout>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

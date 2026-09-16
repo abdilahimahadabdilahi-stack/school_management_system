@@ -14,7 +14,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f6f9;
         }
-        /* Sidebar Styling */
         #sidebar {
             min-width: 250px;
             max-width: 250px;
@@ -42,7 +41,6 @@
             color: #fff;
             background: #0d6efd;
         }
-        /* Main Content Styling */
         #content {
             width: 100%;
             padding: 20px;
@@ -71,18 +69,36 @@
             <li class="active">
                 <a href="{{ route('dashboard') }}"><i class="fa-solid fa-gauge me-2"></i> Dashboard</a>
             </li>
+
+            <!-- Dhammaan Role-alka (Admin, Manager, Teacher) ayaa arki kara -->
             <li>
                 <a href="{{ route('students.index') }}"><i class="fa-solid fa-user-graduate me-2"></i> Students</a>
             </li>
             <li>
-                <a href="{{ route('teachers.index') }}"><i class="fa-solid fa-chalkboard-user me-2"></i> Teachers</a>
-            </li>
-            <li>
-                <a href="{{ route('staff.index') }}"><i class="fa-solid fa-users me-2"></i> Staff</a>
-            </li>
-            <li>
                 <a href="{{ route('attendance.index') }}"><i class="fa-solid fa-clipboard-user me-2"></i> Attendance</a>
             </li>
+            <li>
+                <a href="{{ route('exams.index') }}"><i class="fa-solid fa-file-pen me-2"></i> Exams</a>
+            </li>
+
+            <!-- Admin iyo Manager oo kaliya ayaa arki kara -->
+            @auth
+                @if(in_array(Auth::user()->role, ['admin', 'manager']))
+                    <li>
+                        <a href="{{ route('teachers.index') }}"><i class="fa-solid fa-chalkboard-user me-2"></i> Teachers</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('staff.index') }}"><i class="fa-solid fa-users me-2"></i> Staff</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('managers.index') }}"><i class="fa-solid fa-user-tie me-2"></i> Managers</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('reports.index') }}"><i class="fa-solid fa-chart-line me-2"></i> Reports</a>
+                    </li>
+                @endif
+            @endauth
+
             <hr class="dropdown-divider bg-secondary my-3 mx-3">
             <li>
                 <a href="#"><i class="fa-solid fa-gear me-2"></i> Settings</a>
@@ -110,7 +126,8 @@
                 <div>
                     @auth
                         <span class="navbar-text fw-semibold text-secondary">
-                            Welcome back, <strong>{{ Auth::user()->name }}</strong>
+                            Welcome back, <strong>{{ Auth::user()->name }}</strong> 
+                            <span class="badge bg-primary text-capitalize ms-1">{{ Auth::user()->role }}</span>
                         </span>
                     @else
                         <span class="navbar-text fw-semibold text-secondary">
@@ -124,7 +141,6 @@
                         <i class="fa-regular fa-calendar me-1"></i> {{ date('Y-m-d') }}
                     </span>
 
-                    <!-- Auth buttons for Guest Users -->
                     @guest
                         @if (Route::has('login'))
                             <a href="{{ route('login') }}" class="btn btn-sm btn-outline-primary fw-bold">
@@ -146,7 +162,7 @@
         <div class="p-4 mb-4 text-white rounded shadow-sm d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);">
             <div>
                 <h2 class="fw-bold m-0">School Management Dashboard</h2>
-                <p class="m-0 mt-1 opacity-75">Ku maamul xogta ardayda, macallimiinta, iyo shaqaalaha hab toos ah.</p>
+                <p class="m-0 mt-1 opacity-75">Ku maamul xogta ardayda, macallimiinta, shaqaalaha, maamulayaasha, imtixaanaadka iyo warbixinnada hab toos ah.</p>
             </div>
             <div class="d-none d-md-block fs-1">
                 <i class="fa-solid fa-school text-white-50"></i>
@@ -157,8 +173,8 @@
         <h5 class="fw-bold mb-3 text-secondary"><i class="fa-solid fa-chart-pie me-2"></i>General Overview</h5>
         <div class="row g-4 mb-4">
             
-            <!-- Students Count -->
-            <div class="col-md-4">
+            <!-- Student Card -->
+            <div class="col-md-3">
                 <div class="card stat-card shadow-sm bg-white p-3 border-start border-primary border-5">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
@@ -174,71 +190,139 @@
                 </div>
             </div>
 
-            <!-- Teachers Count -->
-            <div class="col-md-4">
-                <div class="card stat-card shadow-sm bg-white p-3 border-start border-success border-5">
+            <!-- Exam Card -->
+            <div class="col-md-3">
+                <div class="card stat-card shadow-sm bg-white p-3 border-start border-danger border-5">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <span class="text-muted small">Total Teachers</span>
-                            <h2 class="fw-bold text-success m-0 mt-1">{{ $teachers_count ?? 0 }}</h2>
+                            <span class="text-muted small">Total Exams</span>
+                            <h2 class="fw-bold text-danger m-0 mt-1">{{ $exams_count ?? 0 }}</h2>
                         </div>
-                        <div class="bg-success text-white p-3 rounded-circle">
-                            <i class="fa-solid fa-chalkboard-user fs-4"></i>
+                        <div class="bg-danger text-white p-3 rounded-circle">
+                            <i class="fa-solid fa-file-pen fs-4"></i>
                         </div>
                     </div>
                     <hr class="my-2 text-muted">
-                    <a href="{{ route('teachers.index') }}" class="text-success text-decoration-none small fw-bold">View List <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                    <a href="{{ route('exams.index') }}" class="text-danger text-decoration-none small fw-bold">View List <i class="fa-solid fa-arrow-right ms-1"></i></a>
                 </div>
             </div>
 
-            <!-- Staff Count -->
-            <div class="col-md-4">
-                <div class="card stat-card shadow-sm bg-white p-3 border-start border-warning border-5">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <span class="text-muted small">Total Staff</span>
-                            <h2 class="fw-bold text-warning m-0 mt-1">{{ $staff_count ?? 0 }}</h2>
-                        </div>
-                        <div class="bg-warning text-white p-3 rounded-circle">
-                            <i class="fa-solid fa-users fs-4"></i>
+            <!-- Admin iyo Manager Cards -->
+            @auth
+                @if(in_array(Auth::user()->role, ['admin', 'manager']))
+                    <div class="col-md-3">
+                        <div class="card stat-card shadow-sm bg-white p-3 border-start border-success border-5">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <span class="text-muted small">Total Teachers</span>
+                                    <h2 class="fw-bold text-success m-0 mt-1">{{ $teachers_count ?? 0 }}</h2>
+                                </div>
+                                <div class="bg-success text-white p-3 rounded-circle">
+                                    <i class="fa-solid fa-chalkboard-user fs-4"></i>
+                                </div>
+                            </div>
+                            <hr class="my-2 text-muted">
+                            <a href="{{ route('teachers.index') }}" class="text-success text-decoration-none small fw-bold">View List <i class="fa-solid fa-arrow-right ms-1"></i></a>
                         </div>
                     </div>
-                    <hr class="my-2 text-muted">
-                    <a href="{{ route('staff.index') }}" class="text-warning text-decoration-none small fw-bold">View List <i class="fa-solid fa-arrow-right ms-1"></i></a>
-                </div>
-            </div>
+
+                    <div class="col-md-3">
+                        <div class="card stat-card shadow-sm bg-white p-3 border-start border-warning border-5">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <span class="text-muted small">Total Staff</span>
+                                    <h2 class="fw-bold text-warning m-0 mt-1">{{ $staff_count ?? 0 }}</h2>
+                                </div>
+                                <div class="bg-warning text-white p-3 rounded-circle">
+                                    <i class="fa-solid fa-users fs-4"></i>
+                                </div>
+                            </div>
+                            <hr class="my-2 text-muted">
+                            <a href="{{ route('staff.index') }}" class="text-warning text-decoration-none small fw-bold">View List <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card stat-card shadow-sm bg-white p-3 border-start border-info border-5">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <span class="text-muted small">Total Managers</span>
+                                    <h2 class="fw-bold text-info m-0 mt-1">{{ $managers_count ?? 0 }}</h2>
+                                </div>
+                                <div class="bg-info text-white p-3 rounded-circle">
+                                    <i class="fa-solid fa-user-tie fs-4"></i>
+                                </div>
+                            </div>
+                            <hr class="my-2 text-muted">
+                            <a href="{{ route('managers.index') }}" class="text-info text-decoration-none small fw-bold">View List <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card stat-card shadow-sm bg-white p-3 border-start border-dark border-5">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <span class="text-muted small">Total Reports</span>
+                                    <h2 class="fw-bold text-dark m-0 mt-1">{{ $reports_count ?? 0 }}</h2>
+                                </div>
+                                <div class="bg-dark text-white p-3 rounded-circle">
+                                    <i class="fa-solid fa-chart-line fs-4"></i>
+                                </div>
+                            </div>
+                            <hr class="my-2 text-muted">
+                            <a href="{{ route('reports.index') }}" class="text-dark text-decoration-none small fw-bold">View List <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                @endif
+            @endauth
 
         </div>
 
         <!-- Quick Actions -->
         <h5 class="fw-bold mb-3 text-secondary"><i class="fa-solid fa-bolt me-2"></i>Quick Actions</h5>
         <div class="row g-3">
+            <!-- Ardayda iyo Imtixaanaadka oo la wada arki karo -->
             <div class="col-md-3">
                 <a href="{{ route('students.create') }}" class="btn btn-outline-primary w-100 py-3 fw-bold shadow-sm">
                     <i class="fa-solid fa-plus-circle me-2"></i> Add New Student
                 </a>
             </div>
             <div class="col-md-3">
-                <a href="{{ route('teachers.create') }}" class="btn btn-outline-success w-100 py-3 fw-bold shadow-sm">
-                    <i class="fa-solid fa-plus-circle me-2"></i> Add New Teacher
+                <a href="{{ route('exams.create') }}" class="btn btn-outline-danger w-100 py-3 fw-bold shadow-sm">
+                    <i class="fa-solid fa-plus-circle me-2"></i> Add New Exam
                 </a>
             </div>
-            <div class="col-md-3">
-                <a href="{{ route('staff.create') }}" class="btn btn-outline-warning w-100 py-3 fw-bold shadow-sm">
-                    <i class="fa-solid fa-plus-circle me-2"></i> Add New Staff
-                </a>
-            </div>
-            <div class="col-md-3">
-                <a href="{{ route('attendance.create') }}" class="btn btn-outline-dark w-100 py-3 fw-bold shadow-sm">
-                    <i class="fa-solid fa-clipboard-user me-2"></i> Mark Attendance
-                </a>
-            </div>
+
+            <!-- Actions-ka Admin & Manager oo kaliya -->
+            @auth
+                @if(in_array(Auth::user()->role, ['admin', 'manager']))
+                    <div class="col-md-3">
+                        <a href="{{ route('teachers.create') }}" class="btn btn-outline-success w-100 py-3 fw-bold shadow-sm">
+                            <i class="fa-solid fa-plus-circle me-2"></i> Add New Teacher
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ route('staff.create') }}" class="btn btn-outline-warning w-100 py-3 fw-bold shadow-sm">
+                            <i class="fa-solid fa-plus-circle me-2"></i> Add New Staff
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ route('managers.create') }}" class="btn btn-outline-info w-100 py-3 fw-bold shadow-sm">
+                            <i class="fa-solid fa-plus-circle me-2"></i> Add New Manager
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ route('reports.create') }}" class="btn btn-outline-dark w-100 py-3 fw-bold shadow-sm">
+                            <i class="fa-solid fa-plus-circle me-2"></i> Add New Report
+                        </a>
+                    </div>
+                @endif
+            @endauth
         </div>
 
     </div>
 </div>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
