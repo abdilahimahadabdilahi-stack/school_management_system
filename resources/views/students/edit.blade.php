@@ -39,6 +39,21 @@
                     <input type="text" name="class_name" class="form-control" value="{{ old('class_name', $student->class_name) }}" required>
                 </div>
 
+                <div class="mb-3">
+                    <label class="form-label">Section</label>
+                    <input type="text" name="section" class="form-control" value="{{ old('section', $student->section) }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Parent</label>
+                    <select name="parent_id" class="form-select">
+                        <option value="">No parent assigned</option>
+                        @foreach($parents as $parent)
+                            <option value="{{ $parent->id }}" @selected(old('parent_id', $student->parent_id) == $parent->id)>{{ $parent->name }} ({{ $parent->email }})</option>
+                        @endforeach
+                    </select>
+                </div>
+
                 <!-- Input-ka Subject oo la soo kordhiyay -->
                 <div class="mb-3">
                     <label class="form-label">Subject</label>

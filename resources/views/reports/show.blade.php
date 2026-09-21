@@ -1,30 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Show Report - SchoolSMS</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="bg-light">
-<div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fa-solid fa-eye text-primary me-2"></i>Report Details #{{ $id }}</h2>
-        <a href="{{ route('reports.index') }}" class="btn btn-secondary"><i class="fa-solid fa-arrow-left me-1"></i> Back</a>
-    </div>
+@extends('layouts.app-bs')
 
-    <div class="card shadow-sm p-4">
-        <h4 class="fw-bold text-dark">System Summary Report #{{ $id }}</h4>
-        <hr>
-        <p><strong>Type:</strong> Student Report</p>
-        <p><strong>Date:</strong> {{ date('Y-m-d') }}</p>
-        <p><strong>Status:</strong> <span class="badge bg-success">Active</span></p>
-        <p><strong>Details:</strong> Halkan waxaa ku xusan dhammaan xogta faahfaahsan ee warbixinta No. {{ $id }}.</p>
-        
-        <div class="mt-3">
-            <a href="{{ route('reports.edit', $id) }}" class="btn btn-warning fw-bold"><i class="fa-solid fa-pen-to-square me-1"></i> Edit Report</a>
-        </div>
-    </div>
+@section('title', $report['label'].' Report')
+
+@section('content')
+<div class="container-fluid p-0">
+    <div class="d-flex justify-content-between align-items-center mb-4"><div><a href="{{ route('reports.index') }}" class="text-decoration-none text-muted small fw-bold"><i class="fa-solid fa-arrow-left me-1"></i> All Reports</a><h3 class="fw-bold mt-2 mb-0">{{ $report['label'] }} Report</h3></div><form class="d-flex" method="GET"><input name="search" value="{{ request('search') }}" class="form-control me-2" placeholder="Search by name"><button class="btn btn-outline-primary"><i class="fa-solid fa-search"></i></button></form></div>
+    <div class="card card-custom"><div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr>@foreach($report['columns'] as $column)<th>{{ str_replace('_', ' ', ucfirst($column)) }}</th>@endforeach</tr></thead><tbody>@forelse($records as $record)<tr>@foreach($report['columns'] as $column)<td>{{ is_object($record->{$column}) ? $record->{$column}->format('M d, Y H:i') : ($record->{$column} ?? 'N/A') }}</td>@endforeach</tr>@empty<tr><td colspan="{{ count($report['columns']) }}" class="text-center text-muted py-5">No records found.</td></tr>@endforelse</tbody></table></div><div class="p-3">{{ $records->links() }}</div></div>
 </div>
-</body>
-</html>
+@endsection

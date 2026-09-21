@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\Student;
+use App\Services\AttendanceAbsenceNotifier;
 use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
@@ -12,7 +13,7 @@ class AttendanceController extends Controller
     public function index(Request $request)
     {
         $date = $request->input('date', date('Y-m-d'));
-        
+
         $attendances = Attendance::with('student')
             ->where('attendance_date', $date)
             ->get();
@@ -35,11 +36,11 @@ class AttendanceController extends Controller
     }
 
     // Kaydinta ama update-ka xaadirinta badanaaba
-    public function store(Request $request)
+    public function store(Request $request, AttendanceAbsenceNotifier $absenceNotifier)
     {
         $request->validate([
             'attendance_date' => 'required|date',
-            'attendances'     => 'required|array',
+            'attendances' => 'required|array',
         ]);
 
         $date = $request->attendance_date;
@@ -47,13 +48,15 @@ class AttendanceController extends Controller
         foreach ($request->attendances as $student_id => $status) {
             Attendance::updateOrCreate(
                 [
-                    'student_id'      => $student_id,
+                    'student_id' => $student_id,
                     'attendance_date' => $date,
                 ],
                 [
                     'status' => $status,
                 ]
             );
+
+            $absenceNotifier->check(Student::findOrFail($student_id), $date);
         }
 
         return redirect()->route('attendance.index', ['date' => $date])
@@ -64,11 +67,11 @@ class AttendanceController extends Controller
     public function show($id)
     {
         $student = Student::with('attendances')->findOrFail($id);
-        
+
         $stats = [
             'present' => $student->attendances->where('status', 'present')->count(),
-            'late'    => $student->attendances->where('status', 'late')->count(),
-            'absent'  => $student->attendances->where('status', 'absent')->count(),
+            'late' => $student->attendances->where('status', 'late')->count(),
+            'absent' => $student->attendances->where('status', 'absent')->count(),
         ];
 
         return view('attendance.show', compact('student', 'stats'));
@@ -78,11 +81,12 @@ class AttendanceController extends Controller
     public function edit($id)
     {
         $attendance = Attendance::with('student')->findOrFail($id);
+
         return view('attendance.edit', compact('attendance'));
     }
 
     // Update-ka record gaar ah
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, AttendanceAbsenceNotifier $absenceNotifier)
     {
         $request->validate([
             'status' => 'required|in:present,late,absent',
@@ -92,6 +96,7 @@ class AttendanceController extends Controller
         $attendance->update([
             'status' => $request->status,
         ]);
+        $absenceNotifier->check($attendance->student, $attendance->attendance_date);
 
         return redirect()->route('attendance.index', ['date' => $attendance->attendance_date])
             ->with('success', 'Xaadirinta ardayda waa la cusbooneysiiyay!');

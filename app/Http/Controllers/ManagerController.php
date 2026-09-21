@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreManagerRequest;
+use App\Http\Requests\UpdateManagerRequest;
 use App\Models\Manager;
+use App\Models\SecurityLog;
 use Illuminate\Http\Request;
 
 class ManagerController extends Controller
@@ -13,6 +16,7 @@ class ManagerController extends Controller
     public function index()
     {
         $managers = Manager::latest()->paginate(10);
+
         return view('managers.index', compact('managers'));
     }
 
@@ -27,19 +31,24 @@ class ManagerController extends Controller
     /**
      * Ku kaydi maamulaha cusub database-ka (Store action).
      */
-    public function store(Request $request)
+    public function store(StoreManagerRequest $request)
     {
-        $request->validate([
-            'name'        => 'required|string|max:255',
-            'email'       => 'required|email|unique:managers,email',
-            'phone'       => 'nullable|string|max:20',
-            'department'  => 'nullable|string|max:255',
-        ]);
+        $manager = Manager::create($request->validated());
 
-        Manager::create($request->all());
+        try {
+            SecurityLog::create([
+                'user_id' => auth()->id(),
+                'event_type' => 'CREATE_MANAGER',
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'details' => "Created manager record ID #{$manager->id} ('{$manager->name}')",
+            ]);
+        } catch (\Throwable $e) {
+            // Silence log errors
+        }
 
         return redirect()->route('managers.index')
-                         ->with('success', 'Manager-ka cusub waa lagu daray si guul leh!');
+            ->with('success', 'Manager-ka cusub waa lagu daray si guul leh!');
     }
 
     /**
@@ -61,29 +70,49 @@ class ManagerController extends Controller
     /**
      * Ku cusboonaysii xogta maamulaha database-ka (Update action).
      */
-    public function update(Request $request, Manager $manager)
+    public function update(UpdateManagerRequest $request, Manager $manager)
     {
-        $request->validate([
-            'name'        => 'required|string|max:255',
-            'email'       => 'required|email|unique:managers,email,' . $manager->id,
-            'phone'       => 'nullable|string|max:20',
-            'department'  => 'nullable|string|max:255',
-        ]);
+        $manager->update($request->validated());
 
-        $manager->update($request->all());
+        try {
+            SecurityLog::create([
+                'user_id' => auth()->id(),
+                'event_type' => 'UPDATE_MANAGER',
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'details' => "Updated manager record ID #{$manager->id} ('{$manager->name}')",
+            ]);
+        } catch (\Throwable $e) {
+            // Silence log errors
+        }
 
         return redirect()->route('managers.index')
-                         ->with('success', 'Xogta maamulaha waa la cusboonaysiiyay!');
+            ->with('success', 'Xogta maamulaha waa la cusboonaysiiyay!');
     }
 
     /**
      * Ka tiri maamulaha database-ka (Destroy action).
      */
-    public function destroy(Manager $manager)
+    public function destroy(Request $request, Manager $manager)
     {
+        $managerId = $manager->id;
+        $managerName = $manager->name;
+
         $manager->delete();
 
+        try {
+            SecurityLog::create([
+                'user_id' => auth()->id(),
+                'event_type' => 'DELETE_MANAGER',
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'details' => "Deleted manager record ID #{$managerId} ('{$managerName}')",
+            ]);
+        } catch (\Throwable $e) {
+            // Silence log errors
+        }
+
         return redirect()->route('managers.index')
-                         ->with('success', 'Manager-ka waa la tiray si guul leh!');
+            ->with('success', 'Manager-ka waa la tiray si guul leh!');
     }
 }

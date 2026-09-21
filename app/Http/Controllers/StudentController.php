@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SchoolParent;
 use App\Models\Student;
 use Illuminate\Http\Request;
 
@@ -10,46 +11,40 @@ class StudentController extends Controller
     // 1. Tusi dhammaan ardayda
     public function index()
     {
-        $students = Student::all();
+        $students = Student::with('parent')->get();
+
         return view('students.index', compact('students'));
     }
 
     // 2. Tusi form-ka ardayga cusub lagu daro
     public function create()
     {
-        return view('students.create');
+        return view('students.create', ['parents' => SchoolParent::orderBy('name')->get()]);
     }
 
     // 3. Keydi ardayga cusub
     public function store(Request $request)
-{
-    $request->validate([
-        'name'       => 'required|string|max:255',
-        'age'        => 'required|integer',
-        'email'      => 'required|email|unique:students,email',
-        'class_name' => 'required|string|max:255',
-        'subject'    => 'nullable|string|max:255',
-    ]);
-
-    Student::create($request->all());
-
-    return redirect()->route('students.index')->with('success', 'Student added successfully!');
-
-
-        Student::create([
-            'name'       => $request->name,
-            'age'        => $request->age,
-            'email'      => $request->email,
-            'class_name' => $request->class,
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'age' => 'required|integer',
+            'email' => 'required|email|unique:students,email',
+            'class_name' => 'required|string|max:255',
+            'section' => 'nullable|string|max:255',
+            'subject' => 'nullable|string|max:255',
+            'parent_id' => 'nullable|exists:parents,id',
         ]);
 
-        return redirect()->route('students.index')->with('success', 'Ardayga waa la keydiyay!');
+        Student::create($validated);
+
+        return redirect()->route('students.index')->with('success', 'Student added successfully!');
     }
 
     // 4. Tusi faahfaahinta hal arday (Detail view)
     public function show($id)
     {
         $student = Student::findOrFail($id);
+
         return view('students.show', compact('student'));
     }
 
@@ -57,7 +52,9 @@ class StudentController extends Controller
     public function edit($id)
     {
         $student = Student::findOrFail($id);
-        return view('students.edit', compact('student'));
+        $parents = SchoolParent::orderBy('name')->get();
+
+        return view('students.edit', compact('student', 'parents'));
     }
 
     // 6. Cusbooneysii (Update) xogta ardayga
@@ -65,19 +62,17 @@ class StudentController extends Controller
     {
         $student = Student::findOrFail($id);
 
-        $request->validate([
-            'name'  => 'required|string|max:255',
-            'age'   => 'required|integer',
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'age' => 'required|integer',
             'email' => 'required|email|unique:students,email,'.$id,
-            'class' => 'required|string|max:255',
+            'class_name' => 'required|string|max:255',
+            'section' => 'nullable|string|max:255',
+            'subject' => 'nullable|string|max:255',
+            'parent_id' => 'nullable|exists:parents,id',
         ]);
 
-        $student->update([
-            'name'       => $request->name,
-            'age'        => $request->age,
-            'email'      => $request->email,
-            'class_name' => $request->class,
-        ]);
+        $student->update($validated);
 
         return redirect()->route('students.index')->with('success', 'Xogta ardayga waa la cusbooneysiiyay!');
     }

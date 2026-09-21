@@ -48,10 +48,26 @@
                 <!-- Class -->
                 <div class="mb-3">
                     <label class="form-label">Class</label>
-                    <input type="text" name="class_name" class="form-control @error('class_name') is-invalid @enderror" value="{{ old('class_name') }}" required>
+                    <input type="text" name="class_name" class="form-control @error('class_name') is-invalid @enderror" value="{{ old('class_name', request('class_name')) }}" required>
                     @error('class_name')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Section</label>
+                    <input type="text" name="section" class="form-control @error('section') is-invalid @enderror" value="{{ old('section', request('section')) }}">
+                    @error('section')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Parent</label>
+                    <select name="parent_id" class="form-select">
+                        <option value="">No parent assigned</option>
+                        @foreach($parents as $parent)
+                            <option value="{{ $parent->id }}" @selected(old('parent_id') == $parent->id)>{{ $parent->name }} ({{ $parent->email }})</option>
+                        @endforeach
+                    </select>
                 </div>
 
                 <!-- Subject -->

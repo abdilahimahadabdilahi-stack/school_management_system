@@ -27,6 +27,8 @@
                 <th>Age</th>
                 <th>Email</th>
                 <th>Class</th>
+                <th>Section</th>
+                <th>Parent</th>
                 <th>Subject</th> <!-- Tiirka Cusub -->
                 <th class="text-center">Actions</th>
             </tr>
@@ -39,6 +41,8 @@
                     <td>{{ $student->age }}</td>
                     <td>{{ $student->email }}</td>
                     <td>{{ $student->class_name }}</td>
+                    <td>{{ $student->section ?? 'N/A' }}</td>
+                    <td>{{ $student->parent?->name ?? 'N/A' }}</td>
                     <td>{{ $student->subject ?? 'N/A' }}</td> <!-- Muujinta Maaddada -->
                     <td class="text-center">
                         <a href="{{ route('students.show', $student->id) }}" class="btn btn-info btn-sm text-white" title="View">
@@ -60,7 +64,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="text-center">Lama helin wax arday ah.</td>
+                    <td colspan="9" class="text-center">Lama helin wax arday ah.</td>
                 </tr>
             @endforelse
         </tbody>
