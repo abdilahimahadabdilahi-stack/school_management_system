@@ -1,20 +1,12 @@
 <?php
 
-use App\Http\Controllers\AnnouncementController;
-use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\ExamController;
-use App\Http\Controllers\ManagerController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+
 // Models
-use App\Http\Controllers\ParentController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\SchoolClassController;
-use App\Http\Controllers\StaffController;
-use App\Http\Controllers\StudentController;
-use App\Http\Controllers\TeacherController;
 use App\Models\Exam;
 use App\Models\Manager;
-// Controllers
 use App\Models\Payment;
 use App\Models\SchoolClass;
 use App\Models\SchoolParent;
@@ -22,9 +14,19 @@ use App\Models\SecurityLog;
 use App\Models\Staff;
 use App\Models\Student;
 use App\Models\Teacher;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
+
+// Controllers
+use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\ExamController;
+use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\ParentController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SchoolClassController;
+use App\Http\Controllers\StaffController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TeacherController;
 
 if (file_exists(__DIR__.'/auth.php')) {
     require __DIR__.'/auth.php';
@@ -49,13 +51,33 @@ Route::middleware(['auth'])->group(function () {
         ]);
     })->name('dashboard');
 
-    // 1. ROUTES EE LOO OGOL YAHAY TEACHER, MANAGER & ADMIN (Student, Exam, Attendance, Classes)
+    // 1. ROUTES EE LOO OGOL YAHAY TEACHER, MANAGER & ADMIN (Student, Exam, Attendance, Classes & School Setup)
     Route::middleware(['role:admin,manager,teacher'])->group(function () {
         Route::resource('students', StudentController::class);
         Route::resource('exams', ExamController::class);
         Route::resource('attendance', AttendanceController::class);
         Route::resource('classes', SchoolClassController::class);
         Route::resource('announcements', AnnouncementController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
+
+        // Routes-ka Cusub ee SCHOOL_DBS Form-ka
+        Route::get('/school', function () {
+            return view('school');
+        })->name('school.index');
+
+        Route::post('/school/store', function (Request $request) {
+            try {
+                \DB::table('students')->insert([
+                    'name' => $request->student_name,
+                    'class' => $request->class,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                return back()->with('success', 'Xogta si guul leh ayaa loo kaydiyay Database-ka SCHOOL_DBS!');
+            } catch (\Exception $e) {
+                return back()->with('error', 'Cillad ayaa ka jirtay xidhiidhka DB: ' . $e->getMessage());
+            }
+        })->name('school.store');
     });
 
     // 2. ROUTES EE LOO OGOL YAHAY ADMIN IYO MANAGER OO KALIYA (Teacher-ka ma geli karo)

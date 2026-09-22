@@ -15,6 +15,18 @@
         <a href="{{ route('students.create') }}" class="btn btn-primary">+ Add New Student</a>
     </div>
 
+    <form method="GET" action="{{ route('students.index') }}" class="row g-2 mb-4">
+        <div class="col-md-10">
+            <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search students by name, email, class, section, or subject">
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+            @if(request('search'))
+                <a href="{{ route('students.index') }}" class="btn btn-outline-secondary w-100">Clear</a>
+            @endif
+        </div>
+    </form>
+
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif

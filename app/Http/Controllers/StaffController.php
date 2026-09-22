@@ -7,10 +7,22 @@ use Illuminate\Http\Request;
 
 class StaffController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $staffs = Staff::all();
-        return view('staff.index', compact('staffs'));
+        $search = trim((string) $request->input('search', ''));
+
+        $staffs = Staff::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($innerQuery) use ($search) {
+                    $innerQuery->where('id', 'like', "%{$search}%")
+                        ->orWhere('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('name')
+            ->get();
+
+        return view('staff.index', compact('staffs', 'search'));
     }
 
     public function create()

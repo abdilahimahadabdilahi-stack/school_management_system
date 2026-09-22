@@ -45,9 +45,36 @@ class ReportController extends Controller
 
         $definition = self::REPORTS[$report];
         $query = $definition['model']::query();
+        $search = trim((string) $request->input('search', ''));
 
-        if ($request->filled('search') && in_array('name', $definition['columns'], true)) {
-            $query->where('name', 'like', '%'.$request->string('search').'%');
+        if ($search !== '') {
+            if (in_array('name', $definition['columns'], true)) {
+                $query->where('name', 'like', '%'.$search.'%');
+            }
+
+            if (in_array('email', $definition['columns'], true)) {
+                $query->orWhere('email', 'like', '%'.$search.'%');
+            }
+
+            if (in_array('title', $definition['columns'], true)) {
+                $query->orWhere('title', 'like', '%'.$search.'%');
+            }
+
+            if (in_array('subject', $definition['columns'], true)) {
+                $query->orWhere('subject', 'like', '%'.$search.'%');
+            }
+
+            if (in_array('class_name', $definition['columns'], true)) {
+                $query->orWhere('class_name', 'like', '%'.$search.'%');
+            }
+
+            if (in_array('status', $definition['columns'], true)) {
+                $query->orWhere('status', 'like', '%'.$search.'%');
+            }
+
+            if (in_array('student_id', $definition['columns'], true)) {
+                $query->orWhere('student_id', 'like', '%'.$search.'%');
+            }
         }
 
         $records = $query->latest('id')->paginate(25)->withQueryString();
@@ -55,6 +82,7 @@ class ReportController extends Controller
         return view('reports.show', [
             'report' => $definition,
             'records' => $records,
+            'search' => $search,
         ]);
     }
 }

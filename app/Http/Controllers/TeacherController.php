@@ -7,10 +7,22 @@ use Illuminate\Http\Request;
 
 class TeacherController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $teachers = Teacher::all();
-        return view('teachers.index', compact('teachers'));
+        $search = trim((string) $request->input('search', ''));
+
+        $teachers = Teacher::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($innerQuery) use ($search) {
+                    $innerQuery->where('id', 'like', "%{$search}%")
+                        ->orWhere('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('name')
+            ->get();
+
+        return view('teachers.index', compact('teachers', 'search'));
     }
 
     public function create()

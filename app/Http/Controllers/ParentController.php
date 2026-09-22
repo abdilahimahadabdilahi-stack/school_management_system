@@ -13,11 +13,23 @@ class ParentController extends Controller
     /**
      * Ku muuji dhammaan waalidiinta liiska (Index page).
      */
-    public function index()
+    public function index(Request $request)
     {
-        $parents = SchoolParent::latest()->paginate(10);
+        $search = trim((string) $request->input('search', ''));
 
-        return view('parents.index', compact('parents'));
+        $parents = SchoolParent::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($innerQuery) use ($search) {
+                    $innerQuery->where('id', 'like', "%{$search}%")
+                        ->orWhere('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('parents.index', compact('parents', 'search'));
     }
 
     /**

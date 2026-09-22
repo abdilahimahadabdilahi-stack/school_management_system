@@ -13,11 +13,23 @@ class ManagerController extends Controller
     /**
      * Ku muuji dhammaan maamulayaasha liiska (Index page).
      */
-    public function index()
+    public function index(Request $request)
     {
-        $managers = Manager::latest()->paginate(10);
+        $search = trim((string) $request->input('search', ''));
 
-        return view('managers.index', compact('managers'));
+        $managers = Manager::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($innerQuery) use ($search) {
+                    $innerQuery->where('id', 'like', "%{$search}%")
+                        ->orWhere('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('managers.index', compact('managers', 'search'));
     }
 
     /**

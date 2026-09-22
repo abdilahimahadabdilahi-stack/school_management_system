@@ -9,11 +9,24 @@ use Illuminate\Http\Request;
 class StudentController extends Controller
 {
     // 1. Tusi dhammaan ardayda
-    public function index()
+    public function index(Request $request)
     {
-        $students = Student::with('parent')->get();
+        $search = $request->input('search');
 
-        return view('students.index', compact('students'));
+        $students = Student::with('parent')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($innerQuery) use ($search) {
+                    $innerQuery->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('class_name', 'like', "%{$search}%")
+                        ->orWhere('section', 'like', "%{$search}%")
+                        ->orWhere('subject', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('name')
+            ->get();
+
+        return view('students.index', compact('students', 'search'));
     }
 
     // 2. Tusi form-ka ardayga cusub lagu daro

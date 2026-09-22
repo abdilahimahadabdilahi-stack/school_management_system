@@ -10,11 +10,27 @@ use Illuminate\Http\Request;
 class PaymentController extends Controller
 {
     // 1. Tusi dhammaan lacagaha
-    public function index()
+    public function index(Request $request)
     {
-        $payments = Payment::with(['student', 'schoolClass'])->latest()->get();
+        $search = trim((string) $request->input('search', ''));
 
-        return view('payments.index', compact('payments'));
+        $payments = Payment::query()
+            ->with(['student', 'schoolClass'])
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($innerQuery) use ($search) {
+                    $innerQuery->where('id', 'like', "%{$search}%")
+                        ->orWhere('student_id', 'like', "%{$search}%")
+                        ->orWhere('payment_date', 'like', "%{$search}%")
+                        ->orWhere('receipt_number', 'like', "%{$search}%")
+                        ->orWhereHas('student', function ($studentQuery) use ($search) {
+                            $studentQuery->where('name', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->latest('payment_date')
+            ->get();
+
+        return view('payments.index', compact('payments', 'search'));
     }
 
     // 2. Tusi form-ka lacagta cusub

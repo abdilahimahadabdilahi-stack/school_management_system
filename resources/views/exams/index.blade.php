@@ -23,6 +23,18 @@
         </div>
     </div>
 
+    <form method="GET" action="{{ route('exams.index') }}" class="row g-2 mb-4">
+        <div class="col-md-10">
+            <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search exams by name, subject, or date">
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+            @if(request('search'))
+                <a href="{{ route('exams.index') }}" class="btn btn-outline-secondary w-100">Clear</a>
+            @endif
+        </div>
+    </form>
+
     <!-- Flash Message -->
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">

@@ -16,6 +16,18 @@
         </div>
     </div>
 
+    <form method="GET" action="{{ route('parents.index') }}" class="row g-2 mb-4">
+        <div class="col-md-10">
+            <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by ID or name">
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-warning text-white w-100">Search</button>
+            @if(request('search'))
+                <a href="{{ route('parents.index') }}" class="btn btn-outline-secondary w-100">Clear</a>
+            @endif
+        </div>
+    </form>
+
     <div class="card card-custom">
         <div class="card-body p-0">
             <div class="table-responsive">

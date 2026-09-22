@@ -8,10 +8,23 @@ use Illuminate\Http\Request;
 class ExamController extends Controller
 {
     // 1. Muuji dhammaan imtixaanaadka
-    public function index()
+    public function index(Request $request)
     {
-        $exams = Exam::latest()->paginate(10);
-        return view('exams.index', compact('exams'));
+        $search = $request->input('search');
+
+        $exams = Exam::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($innerQuery) use ($search) {
+                    $innerQuery->where('name', 'like', "%{$search}%")
+                        ->orWhere('subject', 'like', "%{$search}%")
+                        ->orWhere('exam_date', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('exams.index', compact('exams', 'search'));
     }
 
     // 2. Foomka lagu daro imtixaan cusub
