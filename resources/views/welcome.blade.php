@@ -136,7 +136,7 @@
                 </div>
                 <hr class="my-2 opacity-10">
                 <a href="{{ route('exams.index') }}" class="text-danger text-decoration-none small fw-semibold d-flex align-items-center justify-content-between">
-                    <span>View Exams</span> <i class="fa-solid fa-arrow-right fs-6"></i>
+                    <span>View Exams &amp; Results</span> <i class="fa-solid fa-arrow-right fs-6"></i>
                 </a>
             </div>
         </div>

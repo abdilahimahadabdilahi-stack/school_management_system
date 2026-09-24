@@ -65,6 +65,9 @@
                                     <a href="{{ route('exams.show', $exam->id) }}" class="btn btn-sm btn-outline-info me-1">
                                         <i class="fa-solid fa-eye"></i> View
                                     </a>
+                                    <a href="{{ route('exams.results', $exam) }}" class="btn btn-sm btn-outline-primary me-1">
+                                        <i class="fa-solid fa-chart-line"></i> Results
+                                    </a>
                                     <!-- Edit Button -->
                                     <a href="{{ route('exams.edit', $exam->id) }}" class="btn btn-sm btn-outline-warning me-1">
                                         <i class="fa-solid fa-pen-to-square"></i> Edit

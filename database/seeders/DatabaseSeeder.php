@@ -71,6 +71,8 @@ class DatabaseSeeder extends Seeder
         Staff::factory(10)->create();
         Manager::factory(10)->create();
         Exam::factory(30)->create();
+        $this->call(SubjectSeeder::class);
+        $this->call(ExamResultSeeder::class);
 
         foreach ($students as $student) {
             for ($daysAgo = 9; $daysAgo >= 0; $daysAgo--) {

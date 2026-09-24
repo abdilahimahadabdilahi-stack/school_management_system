@@ -11,6 +11,7 @@
                 <h3 class="fw-bold m-0"><i class="fa-solid fa-file-lines text-primary me-2"></i>Exam Details</h3>
                 <div>
                     <a href="{{ route('exams.index') }}" class="btn btn-outline-secondary me-2"><i class="fa-solid fa-arrow-left me-1"></i> Back to List</a>
+                    <a href="{{ route('exams.results', $exam) }}" class="btn btn-primary me-2"><i class="fa-solid fa-chart-line me-1"></i> View Results</a>
                     <a href="{{ route('exams.edit', $exam->id) }}" class="btn btn-warning"><i class="fa-solid fa-pen-to-square me-1"></i> Edit Exam</a>
                 </div>
             </div>

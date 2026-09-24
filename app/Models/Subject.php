@@ -6,19 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Exam extends Model
+class Subject extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
-        'subject',
-        'exam_date',
-        'start_time',
-        'total_marks',
+        'slug',
+        'sort_order',
     ];
 
-    public function results(): HasMany
+    public function examResults(): HasMany
     {
         return $this->hasMany(ExamResult::class);
     }

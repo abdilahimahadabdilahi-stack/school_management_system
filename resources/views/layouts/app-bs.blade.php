@@ -205,6 +205,50 @@
                 margin-left: 0;
             }
         }
+
+        @media print {
+            @page {
+                margin: 1cm;
+            }
+
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+
+            #sidebar,
+            .navbar-main,
+            footer,
+            .no-print {
+                display: none !important;
+            }
+
+            #wrapper,
+            #content,
+            main {
+                display: block !important;
+                width: 100% !important;
+                min-height: 0 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .card,
+            .card-custom,
+            .stat-card {
+                box-shadow: none !important;
+                border: 1px solid #dee2e6 !important;
+            }
+
+            .table-responsive {
+                overflow: visible !important;
+            }
+
+            a {
+                color: #000000 !important;
+                text-decoration: none !important;
+            }
+        }
     </style>
     @stack('styles')
 </head>
@@ -239,7 +283,7 @@
             </li>
             <li class="{{ request()->routeIs('exams.*') ? 'active' : '' }}">
                 <a href="{{ route('exams.index') }}">
-                    <i class="fa-solid fa-file-pen"></i> <span>Exams</span>
+                    <i class="fa-solid fa-file-pen"></i> <span>Exams &amp; Results</span>
                 </a>
             </li>
             <li class="{{ request()->routeIs('classes.*') ? 'active' : '' }}">
@@ -313,6 +357,9 @@
                 </div>
 
                 <div class="d-flex align-items-center">
+                    <button type="button" class="btn btn-light border-0 me-2 no-print" onclick="window.print()" title="Print page" aria-label="Print page">
+                        <i class="fa-solid fa-print"></i>
+                    </button>
                     <button type="button" id="themeToggle" class="btn btn-light border-0 me-2" title="Toggle dark mode" aria-label="Toggle dark mode">
                         <i class="fa-solid fa-moon"></i>
                     </button>

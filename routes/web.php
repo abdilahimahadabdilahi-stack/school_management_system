@@ -1,24 +1,10 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-
-// Models
-use App\Models\Exam;
-use App\Models\Manager;
-use App\Models\Payment;
-use App\Models\SchoolClass;
-use App\Models\SchoolParent;
-use App\Models\SecurityLog;
-use App\Models\Staff;
-use App\Models\Student;
-use App\Models\Teacher;
-
-// Controllers
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ExamController;
+use App\Http\Controllers\ExamResultController;
+// Models
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\ParentController;
 use App\Http\Controllers\PaymentController;
@@ -27,6 +13,19 @@ use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
+use App\Models\Exam;
+// Controllers
+use App\Models\Manager;
+use App\Models\Payment;
+use App\Models\SchoolClass;
+use App\Models\SchoolParent;
+use App\Models\SecurityLog;
+use App\Models\Staff;
+use App\Models\Student;
+use App\Models\Teacher;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 if (file_exists(__DIR__.'/auth.php')) {
     require __DIR__.'/auth.php';
@@ -55,6 +54,12 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin,manager,teacher'])->group(function () {
         Route::resource('students', StudentController::class);
         Route::resource('exams', ExamController::class);
+        Route::get('/exams/{exam}/results', [ExamResultController::class, 'results'])->name('exams.results');
+        Route::post('/exams/{exam}/results', [ExamResultController::class, 'storeResult'])->name('exams.results.store');
+        Route::get('/exams/{exam}/results/{examResult}', [ExamResultController::class, 'show'])->name('exams.results.show');
+        Route::get('/exams/{exam}/results/{examResult}/edit', [ExamResultController::class, 'edit'])->name('exams.results.edit');
+        Route::put('/exams/{exam}/results/{examResult}', [ExamResultController::class, 'update'])->name('exams.results.update');
+        Route::delete('/exams/{exam}/results/{examResult}', [ExamResultController::class, 'destroy'])->name('exams.results.destroy');
         Route::resource('attendance', AttendanceController::class);
         Route::resource('classes', SchoolClassController::class);
         Route::resource('announcements', AnnouncementController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
@@ -66,7 +71,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('/school/store', function (Request $request) {
             try {
-                \DB::table('students')->insert([
+                DB::table('students')->insert([
                     'name' => $request->student_name,
                     'class' => $request->class,
                     'created_at' => now(),
@@ -74,8 +79,8 @@ Route::middleware(['auth'])->group(function () {
                 ]);
 
                 return back()->with('success', 'Xogta si guul leh ayaa loo kaydiyay Database-ka SCHOOL_DBS!');
-            } catch (\Exception $e) {
-                return back()->with('error', 'Cillad ayaa ka jirtay xidhiidhka DB: ' . $e->getMessage());
+            } catch (Exception $e) {
+                return back()->with('error', 'Cillad ayaa ka jirtay xidhiidhka DB: '.$e->getMessage());
             }
         })->name('school.store');
     });
