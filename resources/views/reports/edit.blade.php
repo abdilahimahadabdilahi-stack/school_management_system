@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Report - SchoolSMS</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="bg-light">
+@extends('layouts.app-bs')
+
+@section('title', 'Edit Report')
+
+@section('content')
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fa-solid fa-pen-to-square text-warning me-2"></i>Edit Report #{{ $id }}</h2>
@@ -41,5 +37,4 @@
         </form>
     </div>
 </div>
-</body>
-</html>
+@endsection

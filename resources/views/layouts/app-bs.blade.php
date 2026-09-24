@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Dashboard') - SchoolSMS</title>
+    <title>@yield('title', 'Dashboard') - Alhuda Primary and Intermediate School</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome 6 Icons -->
@@ -215,10 +215,7 @@
     <nav id="sidebar">
         <div class="sidebar-header d-flex align-items-center justify-content-between">
             <a href="{{ route('dashboard') }}" class="text-decoration-none d-flex align-items-center">
-                <div class="bg-primary text-white rounded-3 p-2 me-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-                    <i class="fa-solid fa-graduation-cap fs-5"></i>
-                </div>
-                <span class="fs-5 fw-bold text-white tracking-wide">School<span class="text-primary">SMS</span></span>
+                <img src="{{ asset('images/alhuda-logo.svg') }}" alt="Alhuda Primary and Intermediate School" class="img-fluid" style="width: 190px; height: 72px; object-fit: contain;">
             </a>
         </div>
 
@@ -375,6 +372,10 @@
 
             <footer class="text-center text-muted small pt-4 pb-2">
                 Created by Abdirahman Mahad
+                <br>
+                saleban osman
+                  <br>
+                abdiwali mohamed
             </footer>
         </main>
     </div>

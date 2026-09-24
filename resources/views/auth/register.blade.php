@@ -90,10 +90,8 @@
     <div class="register-card my-4">
         <!-- Logo & Header -->
         <div class="text-center mb-3">
-            <div class="brand-icon d-inline-block text-primary fs-1 mb-1">
-                <i class="fa-solid fa-graduation-cap"></i>
-            </div>
-            <h3 class="fw-bold text-dark m-0">SchoolSMS Register</h3>
+            <img src="{{ asset('images/alhuda-logo.svg') }}" alt="Alhuda Primary and Intermediate School" class="img-fluid mb-1" style="max-height: 150px;">
+            <h3 class="fw-bold text-dark m-0">Register</h3>
             <p class="text-muted small mt-1">Samee akoon cusub oo maamul dugsiga</p>
         </div>
 

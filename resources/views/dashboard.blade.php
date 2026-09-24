@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Management System - Dashboard</title>
+    <title>Alhuda Primary and Intermediate School - Dashboard</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome Icons -->
@@ -64,7 +64,7 @@
     <!-- Sidebar -->
     <nav id="sidebar">
         <div class="sidebar-header d-flex align-items-center justify-content-between">
-            <h4 class="m-0 fw-bold text-primary"><i class="fa-solid fa-graduation-cap me-2"></i>SchoolSMS</h4>
+            <h4 class="m-0 fw-bold text-primary"><i class="fa-solid fa-graduation-cap me-2"></i>Alhuda Primary and Intermediate School</h4>
         </div>
 
         <ul class="list-unstyled components">
@@ -123,7 +123,7 @@
                         </span>
                     @else
                         <span class="navbar-text fw-semibold text-secondary">
-                            Welcome to <strong>SchoolSMS</strong>
+                            Welcome to <strong>Alhuda Primary and Intermediate School</strong>
                         </span>
                     @endauth
                 </div>

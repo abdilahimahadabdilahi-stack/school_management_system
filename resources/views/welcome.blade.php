@@ -10,12 +10,9 @@
         <div class="row align-items-center position-relative" style="z-index: 2;">
             <div class="col-lg-8">
                 <span class="badge bg-primary bg-opacity-20 text-primary-light px-3 py-2 rounded-pill fw-semibold mb-3 border border-primary border-opacity-20" style="font-size: 0.8rem;">
-                    <i class="fa-solid fa-shield-halved me-1"></i> School Management System v2.0
+                    <i class="fa-solid fa-shield-halved me-1"></i> Alhuda Primary and Intermediate School
                 </span>
                 <h1 class="display-6 fw-bold mb-2">Welcome back, {{ Auth::user()->name }}!</h1>
-                <p class="text-slate-400 mb-0 leading-relaxed" style="font-size: 1rem; color: #94a3b8;">
-                    Ku soo dhawaaw marinka maamulka dugsiga. Halkan ka maamul ardayda, macallimiinta, maamulayaasha, waalidiinta, imtixaanaadka, iyo habka nabadgelyada sare leh.
-                </p>
             </div>
             <div class="col-lg-4 text-end d-none d-lg-block">
                 <div class="display-1 text-primary opacity-25 me-3">
@@ -23,16 +20,6 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Statistics Overview Grid -->
-    <div class="d-flex align-items-center justify-content-between mb-3">
-        <h5 class="fw-bold m-0 text-slate-800" style="color: #1e293b;">
-            <i class="fa-solid fa-chart-pie text-primary me-2"></i>General System Overview
-        </h5>
-        <span class="badge badge-soft-secondary px-3 py-2 rounded-pill">
-            <i class="fa-regular fa-clock me-1"></i> {{ now()->format('D, M d Y') }}
-        </span>
     </div>
 
     <div class="row g-3 mb-4">

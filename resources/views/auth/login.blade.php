@@ -90,10 +90,7 @@
     <div class="login-card">
         <!-- Logo & Header -->
         <div class="text-center mb-4">
-            <div class="brand-icon d-inline-block text-primary fs-1 mb-2">
-                <i class="fa-solid fa-graduation-cap"></i>
-            </div>
-            <h3 class="fw-bold text-dark m-0">SchoolSMS</h3>
+            <img src="{{ asset('images/alhuda-logo.svg') }}" alt="Alhuda Primary and Intermediate School" class="img-fluid mb-2" style="max-height: 150px;">
             <p class="text-muted small mt-1">Geli xogtaada si aad u gasho nidaamka</p>
         </div>
 

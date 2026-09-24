@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 180" role="img" aria-labelledby="title desc">
+  <title id="title">Alhuda Primary and Intermediate School</title>
+  <desc id="desc">Green laurel wreath surrounding a red school emblem and candle.</desc>
+  <rect width="420" height="180" fill="#ffffff"/>
+  <g fill="none" stroke="#39a935" stroke-width="10" stroke-linecap="round">
+    <path d="M66 92 C35 62 58 24 106 20 C142 17 168 31 188 48"/>
+    <path d="M354 92 C385 62 362 24 314 20 C278 17 252 31 232 48"/>
+    <path d="M70 93 C83 120 111 137 151 140"/>
+    <path d="M350 93 C337 120 309 137 269 140"/>
+  </g>
+  <g fill="#39a935">
+    <ellipse cx="69" cy="53" rx="22" ry="8" transform="rotate(-35 69 53)"/>
+    <ellipse cx="88" cy="32" rx="22" ry="8" transform="rotate(-18 88 32)"/>
+    <ellipse cx="116" cy="24" rx="22" ry="8" transform="rotate(8 116 24)"/>
+    <ellipse cx="351" cy="53" rx="22" ry="8" transform="rotate(35 351 53)"/>
+    <ellipse cx="332" cy="32" rx="22" ry="8" transform="rotate(18 332 32)"/>
+    <ellipse cx="304" cy="24" rx="22" ry="8" transform="rotate(-8 304 24)"/>
+    <ellipse cx="100" cy="119" rx="22" ry="8" transform="rotate(28 100 119)"/>
+    <ellipse cx="320" cy="119" rx="22" ry="8" transform="rotate(-28 320 119)"/>
+  </g>
+  <g transform="translate(210 68)">
+    <path d="M-64 -22 L-28 -48 L64 -48 L29 -22 L-29 -22 L-64 5 L-29 31 L29 31 L64 5 L29 -22" fill="#ed252c"/>
+    <path d="M-42 -4 L-10 -28 L42 -28 L10 -4 L-10 -4 L-42 20 L-10 42 L42 42 L10 20" fill="#ed252c" opacity=".92"/>
+    <ellipse cx="0" cy="27" rx="34" ry="10" fill="#28251f"/>
+    <rect x="-7" y="-9" width="14" height="38" rx="2" fill="#8e1717"/>
+    <path d="M0 -26 C-8 -17 -7 -10 0 -7 C7 -12 7 -19 0 -26Z" fill="#f2b544"/>
+  </g>
+  <text x="210" y="151" text-anchor="middle" font-family="Arial, sans-serif" font-size="29" font-weight="700" letter-spacing="2" fill="#050505">ALHUDA</text>
+  <text x="210" y="169" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#050505">PRIMARY AND INTERMEDIATE SCHOOL</text>
+</svg>
