@@ -9,6 +9,7 @@ use App\Models\Subject;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class ExamResultController extends Controller
 {
@@ -17,7 +18,7 @@ class ExamResultController extends Controller
     public function results(Request $request, Exam $exam): View
     {
         $search = $request->string('search')->trim()->toString();
-        $subjects = Subject::query()->orderBy('sort_order')->get();
+        $subjects = $this->subjectCatalog();
         $students = Student::query()
             ->when($search, function ($query, string $search): void {
                 $query->where(function ($studentQuery) use ($search): void {
@@ -26,6 +27,8 @@ class ExamResultController extends Controller
                         ->orWhere('id', $search);
                 });
             })
+            ->orderBy('class_name')
+            ->orderBy('section')
             ->orderBy('name')
             ->get();
         $results = $exam->results()->with(['student', 'subjectRecord'])->get();
@@ -50,7 +53,20 @@ class ExamResultController extends Controller
                     'grade' => $this->gradeForPercentage($percentage),
                     'status' => $percentage >= self::PASS_THRESHOLD ? 'Passed' : 'Failed',
                 ];
-            });
+            })->filter(fn (array $subjectRow): bool => $subjectRow['record'] !== null)->values();
+
+            if ($subjectRows->isEmpty()) {
+                $subjectRows = collect([[
+                    'record' => null,
+                    'subject' => null,
+                    'marks_obtained' => 0.0,
+                    'total_marks' => 0.0,
+                    'percentage' => 0.0,
+                    'grade' => 'F',
+                    'status' => 'No result',
+                ]]);
+            }
+
             $totalObtained = (float) $subjectRows->sum('marks_obtained');
             $totalMarks = (float) $subjectRows->sum('total_marks');
             $percentage = $totalMarks > 0 ? round(($totalObtained / $totalMarks) * 100, 2) : 0.0;
@@ -130,7 +146,7 @@ class ExamResultController extends Controller
     {
         $examResult = $exam->results()->with('student')->findOrFail($examResult->id);
         $students = Student::query()->orderBy('name')->get(['id', 'name']);
-        $subjects = Subject::query()->orderBy('sort_order')->get();
+        $subjects = $this->subjectCatalog();
 
         return view('exams.results.edit', compact('exam', 'examResult', 'students', 'subjects'));
     }
@@ -178,6 +194,42 @@ class ExamResultController extends Controller
             'average' => $percentage >= self::PASS_THRESHOLD && $percentage < 70,
             default => true,
         };
+    }
+
+    /**
+     * Ensure older installations with an empty subject table can record results.
+     */
+    private function subjectCatalog(): Collection
+    {
+        $subjects = Subject::query()->orderBy('sort_order')->get();
+
+        if ($subjects->isNotEmpty()) {
+            return $subjects;
+        }
+
+        $defaultSubjects = [
+            'Somali',
+            'Religion (Islamic Studies)',
+            'Arabic',
+            'Social Studies',
+            'Mathematics',
+            'Science',
+            'English',
+            'Physics',
+            'Chemistry',
+        ];
+
+        foreach ($defaultSubjects as $index => $name) {
+            Subject::firstOrCreate(
+                ['name' => $name],
+                [
+                    'slug' => str($name)->slug(),
+                    'sort_order' => $index + 1,
+                ],
+            );
+        }
+
+        return Subject::query()->orderBy('sort_order')->get();
     }
 
     private function gradeForPercentage(float $percentage): string

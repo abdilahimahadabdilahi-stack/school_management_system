@@ -36,6 +36,36 @@
             transition: background-color 0.2s ease, color 0.2s ease;
         }
 
+        a {
+            color: #2563eb;
+        }
+
+        .btn {
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .form-label {
+            color: var(--text-main);
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control,
+        .form-select {
+            border-color: var(--border-color);
+            border-radius: 8px;
+            min-height: 44px;
+            padding: 0.65rem 0.8rem;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.12);
+        }
+
         #wrapper {
             display: flex;
             width: 100%;
@@ -49,6 +79,7 @@
             color: #94a3b8;
             transition: all 0.3s ease;
             z-index: 1000;
+            min-height: 100vh;
         }
 
         #sidebar .sidebar-header {
@@ -97,6 +128,13 @@
             background: var(--surface-bg);
             border-bottom: 1px solid var(--border-color);
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02);
+            min-height: 68px;
+        }
+
+        .page-context {
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-weight: 700;
         }
 
         .stat-card {
@@ -197,12 +235,39 @@
             color: var(--text-muted);
         }
 
+        [data-theme="dark"] .page-context,
+        [data-theme="dark"] .form-label {
+            color: var(--text-main);
+        }
+
+        #sidebarBackdrop {
+            display: none;
+        }
+
         @media (max-width: 768px) {
             #sidebar {
+                position: fixed;
+                top: 0;
+                bottom: 0;
                 margin-left: -260px;
+                overflow-y: auto;
             }
             #sidebar.active {
                 margin-left: 0;
+                box-shadow: 12px 0 30px rgba(15, 23, 42, 0.2);
+            }
+            #sidebar.active + #sidebarBackdrop {
+                display: block;
+                position: fixed;
+                inset: 0;
+                background: rgba(15, 23, 42, 0.45);
+                z-index: 999;
+            }
+            #content {
+                width: 100%;
+            }
+            main.p-4 {
+                padding: 1rem !important;
             }
         }
 
@@ -341,6 +406,8 @@
         </ul>
     </nav>
 
+    <button type="button" id="sidebarBackdrop" class="border-0 p-0" aria-label="Close navigation"></button>
+
     <!-- Page Content -->
     <div id="content">
         <!-- Top Navbar -->
@@ -350,8 +417,9 @@
                     <i class="fa-solid fa-bars"></i>
                 </button>
 
-                <div class="d-flex align-items-center text-secondary">
-                    <span class="small fw-semibold">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="page-context d-none d-sm-inline">@yield('title', 'Dashboard')</span>
+                    <span class="small fw-semibold text-secondary">
                         <i class="fa-solid fa-shield-halved text-success me-1"></i> Security Protected System
                     </span>
                 </div>
@@ -423,6 +491,8 @@
                 saleban osman
                   <br>
                 abdiwali mohamed
+                                    <br>
+                                mustafe abdirahman
             </footer>
         </main>
     </div>
@@ -453,6 +523,14 @@
 
     document.getElementById('sidebarCollapse')?.addEventListener('click', function () {
         document.getElementById('sidebar').classList.toggle('active');
+    });
+
+    document.getElementById('sidebarBackdrop')?.addEventListener('click', function () {
+        document.getElementById('sidebar').classList.remove('active');
+    });
+
+    document.querySelectorAll('#sidebar a').forEach((link) => {
+        link.addEventListener('click', () => document.getElementById('sidebar').classList.remove('active'));
     });
 </script>
 @stack('scripts')

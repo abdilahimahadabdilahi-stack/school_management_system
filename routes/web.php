@@ -31,11 +31,15 @@ if (file_exists(__DIR__.'/auth.php')) {
     require __DIR__.'/auth.php';
 }
 
+Route::get('/', function () {
+    return view('home');
+})->name('home');
+
 // Protected Routes (LOGIN OO KALIYA AYAA GELI KARA)
 Route::middleware(['auth'])->group(function () {
 
     // Dashboard: Dhammaan 3-da role (admin, manager, teacher) waad geli karaan
-    Route::get('/', function () {
+    Route::get('/dashboard', function () {
         return view('welcome', [
             'students_count' => Student::count(),
             'teachers_count' => Teacher::count(),

@@ -82,6 +82,7 @@
                 <thead>
                     <tr>
                         <th>Student</th>
+                        <th>Class</th>
                         <th>Subject</th>
                         <th>Marks Obtained</th>
                         <th>Total Marks</th>
@@ -96,7 +97,13 @@
                         @foreach($summary['results'] as $result)
                             <tr>
                                 <td class="fw-semibold">{{ $summary['student']->name }}</td>
-                                <td>{{ $result['subject']->name }}</td>
+                                <td>
+                                    <span class="fw-semibold">{{ $summary['student']->class_name }}</span>
+                                    @if($summary['student']->section)
+                                        <span class="text-muted small d-block">Section {{ $summary['student']->section }}</span>
+                                    @endif
+                                </td>
+                                <td>{{ $result['subject']?->name ?? 'No result recorded' }}</td>
                                 <td>{{ number_format($result['marks_obtained'], 2) }}</td>
                                 <td>{{ number_format($result['total_marks'], 2) }}</td>
                                 <td>
@@ -105,7 +112,7 @@
                                 </td>
                                 <td><span class="badge bg-info text-dark">{{ $summary['grade'] }}</span></td>
                                 <td>
-                                    <span class="badge bg-{{ $summary['status'] === 'Passed' ? 'success' : 'danger' }}">{{ $summary['status'] }}</span>
+                                    <span class="badge bg-{{ $summary['status'] === 'Passed' ? 'success' : ($summary['status'] === 'Failed' ? 'danger' : 'secondary') }}">{{ $summary['status'] }}</span>
                                     @if($summary['band'] === 'Average')
                                         <span class="badge bg-warning text-dark">Average</span>
                                     @endif
@@ -131,7 +138,7 @@
                         @endforeach
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center text-muted py-5">No results match this filter.</td>
+                            <td colspan="9" class="text-center text-muted py-5">No results match this filter.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -155,7 +162,7 @@
                         <select id="student_id" name="student_id" class="form-select" required>
                             <option value="">Select student</option>
                             @foreach($students as $student)
-                                <option value="{{ $student->id }}">{{ $student->name }}</option>
+                                <option value="{{ $student->id }}">{{ $student->name }} · {{ $student->class_name }}{{ $student->section ? ' · Section '.$student->section : '' }}</option>
                             @endforeach
                         </select>
                     </div>

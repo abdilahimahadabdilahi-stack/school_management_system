@@ -299,8 +299,8 @@
                 </a>
             </div>
             <div class="col-md-3">
-                <a href="{{ route('reports.create') }}" class="btn btn-outline-dark w-100 py-3 fw-bold shadow-sm">
-                    <i class="fa-solid fa-file-export me-2"></i> Generate Report
+                <a href="{{ route('reports.index') }}" class="btn btn-outline-dark w-100 py-3 fw-bold shadow-sm">
+                    <i class="fa-solid fa-file-export me-2"></i> View Reports
                 </a>
             </div>
         </div>

@@ -18,6 +18,8 @@ class SubjectSeeder extends Seeder
             'Mathematics',
             'Science',
             'English',
+            'Physics',
+            'Chemistry',
         ];
 
         foreach ($subjects as $sortOrder => $name) {

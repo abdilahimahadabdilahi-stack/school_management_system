@@ -92,6 +92,39 @@ class ExamResultsTest extends TestCase
         });
     }
 
+    public function test_exam_results_include_subject_catalog_and_student_class_context(): void
+    {
+        $exam = Exam::factory()->create();
+        $student = Student::factory()->create([
+            'name' => 'Class Context Student',
+            'class_name' => 'Class B',
+            'section' => 'Blue',
+        ]);
+
+        $response = $this->actingAs(User::factory()->create(['role' => 'admin']))
+            ->get(route('exams.results', $exam));
+
+        $response->assertOk();
+        $response->assertSee('Mathematics');
+        $response->assertSee('Class Context Student');
+        $response->assertSee('Class B');
+        $response->assertSee('Section Blue');
+        $response->assertSee('name="subject_id"', false);
+    }
+
+    public function test_empty_subject_catalog_is_rebuilt_when_results_page_loads(): void
+    {
+        Subject::query()->delete();
+        $exam = Exam::factory()->create();
+
+        $this->actingAs(User::factory()->create(['role' => 'admin']))
+            ->get(route('exams.results', $exam))
+            ->assertOk()
+            ->assertSee('Mathematics');
+
+        $this->assertDatabaseHas('subjects', ['name' => 'Mathematics']);
+    }
+
     public function test_exam_result_can_be_viewed_updated_and_deleted(): void
     {
         $exam = Exam::factory()->create();
@@ -121,7 +154,7 @@ class ExamResultsTest extends TestCase
         $this->actingAs($user)
             ->put(route('exams.results.update', [$exam, $result]), [
                 'student_id' => $student->id,
-                'subject' => 'Mathematics',
+                'subject_id' => $mathematics->id,
                 'marks_obtained' => 75,
                 'total_marks' => 100,
             ])
