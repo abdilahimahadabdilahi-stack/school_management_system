@@ -27,6 +27,10 @@
                             <span class="fs-5 fw-semibold text-dark">{{ $exam->subject }}</span>
                         </div>
                         <div class="col-md-6">
+                            <label class="text-muted small d-block">Exam Type</label>
+                            <span class="badge bg-secondary fs-6 text-capitalize">{{ $exam->exam_type ?? 'midterm' }}</span>
+                        </div>
+                        <div class="col-md-6">
                             <label class="text-muted small d-block">Total Marks</label>
                             <span class="badge bg-info text-dark fs-6">{{ $exam->total_marks }} Marks</span>
                         </div>

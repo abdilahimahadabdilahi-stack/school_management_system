@@ -12,7 +12,7 @@
             <h3 class="fw-bold text-slate-800 m-0 mt-2">
                 <i class="fa-solid fa-chart-line text-primary me-2"></i>{{ $exam->name }} Results
             </h3>
-            <p class="text-muted small m-0 mt-1">{{ $exam->subject }} · {{ $exam->exam_date }} · Pass threshold: {{ $passThreshold }}%</p>
+            <p class="text-muted small m-0 mt-1">{{ $exam->subject }} · {{ ucfirst($exam->exam_type ?? 'midterm') }} Exam · {{ $exam->exam_date }} · Pass threshold: {{ $passThreshold }}%</p>
         </div>
         <button type="button" class="btn btn-primary no-print" data-bs-toggle="modal" data-bs-target="#recordResultModal">
             <i class="fa-solid fa-plus me-1"></i> Record Result

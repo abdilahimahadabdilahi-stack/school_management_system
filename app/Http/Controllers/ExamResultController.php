@@ -35,54 +35,20 @@ class ExamResultController extends Controller
 
         $studentSummaries = $students->mapWithKeys(function (Student $student) use ($exam, $results, $subjects): array {
             $studentResults = $results->where('student_id', $student->id);
-            $subjectRows = $subjects->map(function (Subject $subject) use ($exam, $studentResults): array {
-                $result = $studentResults->first(
-                    fn (ExamResult $examResult): bool => $examResult->subject_id === $subject->id
-                        || ($examResult->subject_id === null && $examResult->subject === $subject->name),
-                );
-                $totalMarks = (float) ($result?->total_marks ?? $exam->total_marks);
-                $marksObtained = (float) ($result?->marks_obtained ?? 0);
-                $percentage = $totalMarks > 0 ? round(($marksObtained / $totalMarks) * 100, 2) : 0.0;
-
-                return [
-                    'record' => $result,
-                    'subject' => $subject,
-                    'marks_obtained' => $marksObtained,
-                    'total_marks' => $totalMarks,
-                    'percentage' => $percentage,
-                    'grade' => $this->gradeForPercentage($percentage),
-                    'status' => $percentage >= self::PASS_THRESHOLD ? 'Passed' : 'Failed',
-                ];
-            })->filter(fn (array $subjectRow): bool => $subjectRow['record'] !== null)->values();
-
-            if ($subjectRows->isEmpty()) {
-                $subjectRows = collect([[
-                    'record' => null,
-                    'subject' => null,
-                    'marks_obtained' => 0.0,
-                    'total_marks' => 0.0,
-                    'percentage' => 0.0,
-                    'grade' => 'F',
-                    'status' => 'No result',
-                ]]);
-            }
-
-            $totalObtained = (float) $subjectRows->sum('marks_obtained');
-            $totalMarks = (float) $subjectRows->sum('total_marks');
-            $percentage = $totalMarks > 0 ? round(($totalObtained / $totalMarks) * 100, 2) : 0.0;
+            $summary = $student->examResultsTotals($exam, $studentResults, $subjects);
 
             return [
                 $student->id => [
                     'student' => $student,
-                    'results' => $subjectRows,
-                    'total_obtained' => $totalObtained,
-                    'total_marks' => $totalMarks,
-                    'percentage' => $percentage,
-                    'grade' => $this->gradeForPercentage($percentage),
-                    'status' => $percentage >= self::PASS_THRESHOLD ? 'Passed' : 'Failed',
-                    'band' => $percentage >= self::PASS_THRESHOLD && $percentage < 70
+                    'results' => $summary['results'],
+                    'total_obtained' => $summary['total_obtained'],
+                    'total_marks' => $summary['total_marks'],
+                    'percentage' => $summary['percentage'],
+                    'grade' => $this->gradeForPercentage($summary['percentage']),
+                    'status' => $summary['percentage'] >= self::PASS_THRESHOLD ? 'Passed' : 'Failed',
+                    'band' => $summary['percentage'] >= self::PASS_THRESHOLD && $summary['percentage'] < 70
                         ? 'Average'
-                        : ($percentage >= 70 ? 'Above Average' : 'Below Average'),
+                        : ($summary['percentage'] >= 70 ? 'Above Average' : 'Below Average'),
                 ],
             ];
         });
@@ -209,10 +175,10 @@ class ExamResultController extends Controller
 
         $defaultSubjects = [
             'Somali',
-            'Religion (Islamic Studies)',
+            'Tarbiya (Islamic Studies)',
             'Arabic',
             'Social Studies',
-            'Mathematics',
+            'Maths',
             'Science',
             'English',
             'Physics',

@@ -31,22 +31,34 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Exam Type</label>
+                                <select name="exam_type" class="form-select @error('exam_type') is-invalid @enderror" required>
+                                    <option value="">Select exam type</option>
+                                    <option value="midterm" {{ old('exam_type') === 'midterm' ? 'selected' : '' }}>Midterm</option>
+                                    <option value="final" {{ old('exam_type') === 'final' ? 'selected' : '' }}>Final</option>
+                                </select>
+                                @error('exam_type') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
                                 <label class="form-label fw-bold">Exam Date</label>
                                 <input type="date" name="exam_date" class="form-control @error('exam_date') is-invalid @enderror" value="{{ old('exam_date') }}" required>
                                 @error('exam_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
+                        </div>
 
+                        <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-bold">Start Time (Optional)</label>
                                 <input type="time" name="start_time" class="form-control @error('start_time') is-invalid @enderror" value="{{ old('start_time') }}">
                                 @error('start_time') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
-                        </div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Total Marks</label>
-                            <input type="number" name="total_marks" class="form-control @error('total_marks') is-invalid @enderror" value="{{ old('total_marks', 100) }}" min="1" required>
-                            @error('total_marks') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label fw-bold">Total Marks</label>
+                                <input type="number" name="total_marks" class="form-control @error('total_marks') is-invalid @enderror" value="{{ old('total_marks', 100) }}" min="1" required>
+                                @error('total_marks') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
                         </div>
 
                         <div class="d-grid gap-2">

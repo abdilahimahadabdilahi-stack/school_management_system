@@ -12,10 +12,10 @@ class SubjectSeeder extends Seeder
     {
         $subjects = [
             'Somali',
-            'Religion (Islamic Studies)',
+            'Tarbiya (Islamic Studies)',
             'Arabic',
             'Social Studies',
-            'Mathematics',
+            'Maths',
             'Science',
             'English',
             'Physics',

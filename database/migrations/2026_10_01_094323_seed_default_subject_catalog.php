@@ -9,10 +9,10 @@ return new class extends Migration
     {
         $subjects = [
             'Somali',
-            'Religion (Islamic Studies)',
+            'Tarbiya (Islamic Studies)',
             'Arabic',
             'Social Studies',
-            'Mathematics',
+            'Maths',
             'Science',
             'English',
             'Physics',
@@ -37,10 +37,10 @@ return new class extends Migration
         DB::table('subjects')
             ->whereIn('name', [
                 'Somali',
-                'Religion (Islamic Studies)',
+                'Tarbiya (Islamic Studies)',
                 'Arabic',
                 'Social Studies',
-                'Mathematics',
+                'Maths',
                 'Science',
                 'English',
                 'Physics',

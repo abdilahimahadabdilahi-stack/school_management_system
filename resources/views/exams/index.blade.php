@@ -45,6 +45,7 @@
                             <th class="ps-3">#</th>
                             <th>Exam Name</th>
                             <th>Subject</th>
+                            <th>Type</th>
                             <th>Date</th>
                             <th>Start Time</th>
                             <th>Total Marks</th>
@@ -57,6 +58,7 @@
                                 <td class="ps-3 fw-bold">{{ $loop->iteration }}</td>
                                 <td><span class="fw-semibold text-primary">{{ $exam->name }}</span></td>
                                 <td>{{ $exam->subject }}</td>
+                                <td><span class="badge bg-secondary text-capitalize">{{ $exam->exam_type ?? 'midterm' }}</span></td>
                                 <td><span class="badge bg-light text-dark border">{{ $exam->exam_date }}</span></td>
                                 <td>{{ $exam->start_time ?? 'N/A' }}</td>
                                 <td><span class="badge bg-info text-dark">{{ $exam->total_marks }} Marks</span></td>
@@ -84,7 +86,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-4 text-muted">
+                                <td colspan="8" class="text-center py-4 text-muted">
                                     <i class="fa-solid fa-folder-open fs-3 d-block mb-2"></i>
                                     Wax imtixaan ah weli ma jiraan.
                                 </td>

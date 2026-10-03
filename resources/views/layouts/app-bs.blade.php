@@ -488,7 +488,8 @@
             <footer class="text-center text-muted small pt-4 pb-2">
                 Created by Abdirahman Mahad
                 <br>
-                saleban osman
+
+saleban osman
                   <br>
                 abdiwali mohamed
                                     <br>

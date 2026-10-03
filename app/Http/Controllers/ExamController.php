@@ -46,6 +46,7 @@ class ExamController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'subject' => 'required|string|max:255',
+            'exam_type' => ['required', 'in:midterm,final'],
             'exam_date' => 'required|date',
             'start_time' => 'nullable',
             'total_marks' => 'required|integer|min:1',
@@ -138,6 +139,7 @@ class ExamController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'subject' => 'required|string|max:255',
+            'exam_type' => ['required', 'in:midterm,final'],
             'exam_date' => 'required|date',
             'start_time' => 'nullable',
             'total_marks' => 'required|integer|min:1',
