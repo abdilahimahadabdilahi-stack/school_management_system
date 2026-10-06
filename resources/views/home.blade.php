@@ -164,8 +164,12 @@
         </section>
         <section id="gallery" aria-hidden="true"></section>
         <section class="contact-band" id="contact">
-            <div><h2>We would love to hear from you</h2><p>Contact the Al-Huda school office for admissions and school information.</p></div>
-            <a class="button light" href="mailto:info@alhuda-school.com"><i class="fa-solid fa-envelope"></i> Email the school</a>
+            <div>
+                <h2>We would love to hear from you</h2>
+                <p>Address: 31 May, Warshada Caanaha</p>
+                <p>Phone: <a href="tel:+252634444987">+252 63 4444987</a></p>
+            </div>
+            <a class="button light" href="mailto:abdilahimahadabdilahi@gmail.com"><i class="fa-solid fa-envelope"></i> abdilahimahadabdilahi@gmail.com</a>
         </section>
     </main>
 
