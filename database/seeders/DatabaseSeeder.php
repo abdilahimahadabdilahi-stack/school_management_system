@@ -75,9 +75,12 @@ class DatabaseSeeder extends Seeder
         $this->call(ExamResultSeeder::class);
 
         foreach ($students as $student) {
+            $schoolClassId = $classes->firstWhere('class_label', $student->class_name)?->id;
+
             for ($daysAgo = 9; $daysAgo >= 0; $daysAgo--) {
                 Attendance::create([
                     'student_id' => $student->id,
+                    'class_id' => $schoolClassId,
                     'attendance_date' => now()->subDays($daysAgo)->toDateString(),
                     'status' => $student->id === $students->first()->id && $daysAgo <= 2
                         ? 'absent'

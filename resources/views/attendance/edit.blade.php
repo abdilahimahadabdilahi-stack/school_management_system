@@ -24,6 +24,11 @@
             <input type="text" class="form-control" value="{{ $attendance->attendance_date }}" disabled>
         </div>
 
+        <div class="mb-3">
+            <label class="form-label fw-bold">Class:</label>
+            <input type="text" class="form-control" value="{{ $attendance->schoolClass?->class_label ?? 'N/A' }}" disabled>
+        </div>
+
         <div class="mb-4">
             <label class="form-label fw-bold">Status:</label>
             <select name="status" class="form-select">

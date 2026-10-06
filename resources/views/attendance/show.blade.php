@@ -41,6 +41,7 @@
         <thead class="table-dark">
             <tr>
                 <th>Date</th>
+                <th>Class</th>
                 <th>Status</th>
             </tr>
         </thead>
@@ -48,6 +49,7 @@
             @forelse($student->attendances as $record)
                 <tr>
                     <td>{{ $record->attendance_date }}</td>
+                    <td>{{ $record->schoolClass?->class_label ?? 'N/A' }}</td>
                     <td>
                         @if($record->status == 'present')
                             <span class="badge bg-success">Present</span>
@@ -60,7 +62,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="2" class="text-center">Wax xaadirin ah looma hayo ardaygan.</td>
+                    <td colspan="3" class="text-center">Wax xaadirin ah looma hayo ardaygan.</td>
                 </tr>
             @endforelse
         </tbody>

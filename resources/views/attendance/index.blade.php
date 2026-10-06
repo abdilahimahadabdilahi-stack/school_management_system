@@ -17,11 +17,24 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <!-- Date Filter -->
     <form action="{{ route('attendance.index') }}" method="GET" class="row g-3 mb-4">
-        <div class="col-auto d-flex align-items-center">
-            <label class="fw-bold me-2">Taariikhda:</label>
-            <input type="date" name="date" class="form-control" value="{{ $date }}" onchange="this.form.submit()">
+        <div class="col-md-4">
+            <label for="attendance-date" class="form-label">Date</label>
+            <input id="attendance-date" type="date" name="date" class="form-control" value="{{ $date }}">
+        </div>
+        <div class="col-md-4">
+            <label for="attendance-class" class="form-label">Class</label>
+            <select id="attendance-class" name="class_id" class="form-select">
+                <option value="">All classes</option>
+                @foreach($classes as $class)
+                    <option value="{{ $class->id }}" @selected((string) $classId === (string) $class->id)>
+                        {{ $class->class_label }} (Section {{ $class->section }})
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-outline-primary">Filter records</button>
         </div>
     </form>
 
@@ -30,6 +43,7 @@
             <tr>
                 <th>#ID</th>
                 <th>Ardayga</th>
+                <th>Class</th>
                 <th>Taariikhda</th>
                 <th>Status</th>
                 <th class="text-center">Actions</th>
@@ -40,6 +54,7 @@
                 <tr>
                     <td>{{ $item->id }}</td>
                     <td class="fw-bold">{{ $item->student->name ?? 'N/A' }}</td>
+                    <td>{{ $item->schoolClass?->class_label ?? 'N/A' }}</td>
                     <td>{{ $item->attendance_date }}</td>
                     <td>
                         @if($item->status == 'present')
@@ -63,7 +78,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="text-center text-muted">Lama helin wax xaadirin ah taariikhdan ({{ $date }}). Ku dhufo **Mark Attendance** si aad u xaadiriso.</td>
+                    <td colspan="6" class="text-center text-muted">Lama helin wax xaadirin ah taariikhdan ({{ $date }}). Ku dhufo **Mark Attendance** si aad u xaadiriso.</td>
                 </tr>
             @endforelse
         </tbody>

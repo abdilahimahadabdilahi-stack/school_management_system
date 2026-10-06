@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Announcement;
 use App\Models\Attendance;
+use App\Models\SchoolClass;
 use App\Models\SchoolParent;
 use App\Models\Student;
 use App\Notifications\AbsenceAlert;
@@ -23,11 +24,16 @@ class AttendanceAbsenceNotificationTest extends TestCase
             'name' => 'Amina Hassan',
             'email' => 'amina@example.com',
         ]);
-        $student = Student::factory()->create(['parent_id' => $parent->id]);
+        $schoolClass = $this->createClass();
+        $student = Student::factory()->create([
+            'parent_id' => $parent->id,
+            'class_name' => $schoolClass->class_label,
+            'section' => $schoolClass->section,
+        ]);
         foreach ([
-            ['student_id' => $student->id, 'attendance_date' => '2026-09-18', 'status' => 'absent'],
-            ['student_id' => $student->id, 'attendance_date' => '2026-09-19', 'status' => 'absent'],
-            ['student_id' => $student->id, 'attendance_date' => '2026-09-20', 'status' => 'absent'],
+            ['student_id' => $student->id, 'class_id' => $schoolClass->id, 'attendance_date' => '2026-09-18', 'status' => 'absent'],
+            ['student_id' => $student->id, 'class_id' => $schoolClass->id, 'attendance_date' => '2026-09-19', 'status' => 'absent'],
+            ['student_id' => $student->id, 'class_id' => $schoolClass->id, 'attendance_date' => '2026-09-20', 'status' => 'absent'],
         ] as $attendance) {
             Attendance::create($attendance);
         }
@@ -51,11 +57,16 @@ class AttendanceAbsenceNotificationTest extends TestCase
             'name' => 'Amina Hassan',
             'email' => 'amina@example.com',
         ]);
-        $student = Student::factory()->create(['parent_id' => $parent->id]);
+        $schoolClass = $this->createClass();
+        $student = Student::factory()->create([
+            'parent_id' => $parent->id,
+            'class_name' => $schoolClass->class_label,
+            'section' => $schoolClass->section,
+        ]);
         foreach ([
-            ['student_id' => $student->id, 'attendance_date' => '2026-09-18', 'status' => 'absent'],
-            ['student_id' => $student->id, 'attendance_date' => '2026-09-19', 'status' => 'absent'],
-            ['student_id' => $student->id, 'attendance_date' => '2026-09-20', 'status' => 'absent'],
+            ['student_id' => $student->id, 'class_id' => $schoolClass->id, 'attendance_date' => '2026-09-18', 'status' => 'absent'],
+            ['student_id' => $student->id, 'class_id' => $schoolClass->id, 'attendance_date' => '2026-09-19', 'status' => 'absent'],
+            ['student_id' => $student->id, 'class_id' => $schoolClass->id, 'attendance_date' => '2026-09-20', 'status' => 'absent'],
         ] as $attendance) {
             Attendance::create($attendance);
         }
@@ -66,5 +77,15 @@ class AttendanceAbsenceNotificationTest extends TestCase
 
         $this->assertSame(1, Announcement::count());
         Notification::assertSentOnDemandTimes(AbsenceAlert::class, 1);
+    }
+
+    private function createClass(): SchoolClass
+    {
+        return SchoolClass::create([
+            'class_number' => 2,
+            'section' => 'A',
+            'class_label' => '2A',
+            'capacity' => 40,
+        ]);
     }
 }
