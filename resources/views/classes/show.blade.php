@@ -65,25 +65,22 @@
                 <table class="table table-striped table-hover align-middle">
                     <thead class="table-dark">
                         <tr>
-                            <th>#</th>
-                            <th>Student</th>
+                            <th>#ID</th>
+                            <th>Name</th>
+                            <th>Age</th>
                             <th>Email</th>
-                            <th>Parent</th>
+                            <th>Class</th>
                             <th>Section</th>
+                            <th>Parent</th>
+                            <th>Subject</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($schoolClass->students as $student)
-                            <tr>
-                                <td>{{ $student->id }}</td>
-                                <td class="fw-semibold">{{ $student->name }}</td>
-                                <td>{{ $student->email }}</td>
-                                <td>{{ $student->parent?->name ?? 'N/A' }}</td>
-                                <td>{{ $student->section ?? $schoolClass->section }}</td>
-                            </tr>
+                            <x-student-row :student="$student" />
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center text-muted py-4">No students are assigned to this class.</td>
+                                <td colspan="8" class="text-center text-muted py-4">No students are assigned to this class.</td>
                             </tr>
                         @endforelse
                     </tbody>
