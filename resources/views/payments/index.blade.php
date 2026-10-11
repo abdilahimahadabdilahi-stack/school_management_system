@@ -9,6 +9,7 @@
         <h2><i class="fa-solid fa-money-bill-wave me-2"></i>Fee Payments</h2>
         <div>
             <a href="{{ route('dashboard') }}" class="btn btn-secondary me-2"><i class="fa-solid fa-arrow-left me-1"></i>Dashboard</a>
+            <a href="{{ route('students.unpaid') }}" class="btn btn-outline-danger me-2"><i class="fa-solid fa-file-invoice-dollar me-1"></i>Unpaid Students</a>
             <a href="{{ route('payments.create') }}" class="btn btn-primary">+ Add Payment</a>
         </div>
     </div>

@@ -126,7 +126,7 @@
             <a href="#admissions">Admissions</a>
             <a href="#gallery">Gallery</a>
             <a href="#contact">Contact</a>
-            <a class="nav-cta" href="{{ route('login') }}"><i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Staff login</a>
+            <a class="nav-cta" href="{{ route('login') }}"><i class="fa-solid fa-arrow-right-to-bracket me-1"></i> start login</a>
         </nav>
     </header>
 

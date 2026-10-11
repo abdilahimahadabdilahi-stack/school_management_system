@@ -39,6 +39,9 @@
                 <a href="{{ route('students.index') }}" class="text-primary text-decoration-none small fw-semibold d-flex align-items-center justify-content-between">
                     <span>Manage Students</span> <i class="fa-solid fa-arrow-right fs-6"></i>
                 </a>
+                <a href="{{ route('students.unpaid') }}" class="text-danger text-decoration-none small fw-semibold d-flex align-items-center justify-content-between mt-2">
+                    <span>Unpaid Fees Report</span> <i class="fa-solid fa-arrow-right fs-6"></i>
+                </a>
             </div>
         </div>
 

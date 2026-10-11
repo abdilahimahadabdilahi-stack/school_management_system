@@ -56,6 +56,7 @@ Route::middleware(['auth'])->group(function () {
 
     // 1. ROUTES EE LOO OGOL YAHAY TEACHER, MANAGER & ADMIN (Student, Exam, Attendance, Classes & School Setup)
     Route::middleware(['role:admin,manager,teacher'])->group(function () {
+        Route::get('/students/unpaid', [\App\Http\Controllers\UnpaidStudentsController::class, 'index'])->name('students.unpaid');
         Route::resource('students', StudentController::class);
         Route::resource('exams', ExamController::class);
         Route::get('/exams/{exam}/results', [ExamResultController::class, 'results'])->name('exams.results');
