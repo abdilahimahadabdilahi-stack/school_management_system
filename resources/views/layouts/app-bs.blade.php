@@ -486,14 +486,7 @@
             @yield('content')
 
             <footer class="text-center text-muted small pt-4 pb-2">
-                Created by Abdirahman Mahad
-                <br>
-
-saleban osman
-                  <br>
-                abdiwali mohamed
-                                    <br>
-                                mustafe abdirahman
+                Eng. Abdirahman Mahad
             </footer>
         </main>
     </div>

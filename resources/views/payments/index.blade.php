@@ -15,16 +15,23 @@
     </div>
 
     <form method="GET" action="{{ route('payments.index') }}" class="row g-2 mb-4">
-        <div class="col-md-10">
+        <div class="col-md-7">
             <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by ID, student name, or payment date">
+        </div>
+        <div class="col-md-3">
+            <label for="payment-date" class="visually-hidden">Filter by payment date</label>
+            <input id="payment-date" type="date" name="payment_date" value="{{ $paymentDate }}" class="form-control" aria-label="Filter by payment date">
         </div>
         <div class="col-md-2 d-flex gap-2">
             <button type="submit" class="btn btn-primary w-100">Search</button>
-            @if(request('search'))
+            @if(request('search') || $paymentDate !== '')
                 <a href="{{ route('payments.index') }}" class="btn btn-outline-secondary w-100">Clear</a>
             @endif
         </div>
     </form>
+    @error('payment_date')
+        <div class="alert alert-danger">{{ $message }}</div>
+    @enderror
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>

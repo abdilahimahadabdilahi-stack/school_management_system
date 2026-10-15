@@ -104,4 +104,115 @@ class SearchFilterTest extends TestCase
         $response->assertSee('Charlie Brown');
         $response->assertDontSee('Diana White');
     }
+
+    public function test_payments_index_can_filter_by_exact_payment_date(): void
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $matchedStudent = Student::factory()->create(['name' => 'Matched Student']);
+        $otherStudent = Student::factory()->create(['name' => 'Other Student']);
+
+        Payment::create([
+            'student_id' => $matchedStudent->id,
+            'amount' => 100,
+            'total_fee' => 500,
+            'balance' => 400,
+            'status' => 'partial',
+            'payment_method' => 'cash',
+            'receipt_number' => 'RCP-2026-003',
+            'payment_date' => '2026-09-10',
+        ]);
+        Payment::create([
+            'student_id' => $otherStudent->id,
+            'amount' => 100,
+            'total_fee' => 500,
+            'balance' => 400,
+            'status' => 'partial',
+            'payment_method' => 'cash',
+            'receipt_number' => 'RCP-2026-004',
+            'payment_date' => '2026-09-15',
+        ]);
+
+        $response = $this->actingAs($user)
+            ->get(route('payments.index', ['payment_date' => '2026-09-10']));
+
+        $response->assertOk();
+        $response->assertSee('Matched Student');
+        $response->assertDontSee('Other Student');
+        $response->assertSee('value="2026-09-10"', false);
+    }
+
+    public function test_unpaid_students_index_can_filter_by_student_name_or_class(): void
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+
+        $alice = Student::factory()->create([
+            'name' => 'Alice Johnson',
+            'class_name' => 'Grade 7',
+        ]);
+
+        Student::factory()->create([
+            'name' => 'Bob Smith',
+            'class_name' => 'Grade 8',
+        ]);
+
+        $response = $this->actingAs($user)
+            ->get(route('students.unpaid', ['search' => 'grade 7']));
+
+        $response->assertOk();
+        $response->assertSee('Alice Johnson');
+        $response->assertDontSee('Bob Smith');
+        $response->assertSee('value="grade 7"', false);
+        $response->assertSee(route('students.create', ['return_to' => 'unpaid', 'search' => 'grade 7']));
+        $response->assertSee(route('students.edit', [
+            'student' => $alice->id,
+            'return_to' => 'unpaid',
+            'search' => 'grade 7',
+        ]));
+        $response->assertSee(route('students.destroy', $alice->id), false);
+    }
+
+    public function test_unpaid_students_index_can_filter_by_payment_date(): void
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $alice = Student::factory()->create([
+            'name' => 'Alice Johnson',
+            'class_name' => 'Grade 7',
+        ]);
+        $bob = Student::factory()->create([
+            'name' => 'Bob Smith',
+            'class_name' => 'Grade 8',
+        ]);
+
+        Payment::create([
+            'student_id' => $alice->id,
+            'amount' => 100,
+            'total_fee' => 500,
+            'balance' => 400,
+            'status' => 'partial',
+            'payment_method' => 'cash',
+            'payment_date' => '2026-09-10',
+        ]);
+        Payment::create([
+            'student_id' => $bob->id,
+            'amount' => 100,
+            'total_fee' => 500,
+            'balance' => 400,
+            'status' => 'partial',
+            'payment_method' => 'cash',
+            'payment_date' => '2026-09-15',
+        ]);
+
+        $response = $this->actingAs($user)
+            ->get(route('students.unpaid', ['payment_date' => '2026-09-10']));
+
+        $response->assertOk();
+        $response->assertSee('Alice Johnson');
+        $response->assertDontSee('Bob Smith');
+        $response->assertSee('value="2026-09-10"', false);
+        $response->assertSee(route('students.edit', [
+            'student' => $alice->id,
+            'return_to' => 'unpaid',
+            'payment_date' => '2026-09-10',
+        ]));
+    }
 }

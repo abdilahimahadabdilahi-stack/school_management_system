@@ -8,11 +8,20 @@
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h4 class="m-0 fw-bold">Add New Student</h4>
-            <a href="{{ route('students.index') }}" class="btn btn-sm btn-light">Back</a>
+            @php
+                $returnToUnpaid = old('return_to', request('return_to')) === 'unpaid';
+                $returnSearch = old('search', request('search', ''));
+            @endphp
+            <a href="{{ $returnToUnpaid ? route('students.unpaid', ['search' => $returnSearch]) : route('students.index') }}" class="btn btn-sm btn-light">Back</a>
         </div>
         <div class="card-body p-4">
             <form action="{{ route('students.store') }}" method="POST">
                 @csrf
+                @if($returnToUnpaid)
+                    <input type="hidden" name="return_to" value="unpaid">
+                    <input type="hidden" name="search" value="{{ $returnSearch }}">
+                    <input type="hidden" name="payment_date" value="{{ old('payment_date', request('payment_date', '')) }}">
+                @endif
                 
                 <!-- Full Name -->
                 <div class="mb-3">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\SchoolParent;
 use App\Models\Student;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class StudentController extends Controller
@@ -50,7 +51,7 @@ class StudentController extends Controller
 
         Student::create($validated);
 
-        return redirect()->route('students.index')->with('success', 'Student added successfully!');
+        return $this->redirectAfterChange($request)->with('success', 'Student added successfully!');
     }
 
     // 4. Tusi faahfaahinta hal arday (Detail view)
@@ -87,15 +88,37 @@ class StudentController extends Controller
 
         $student->update($validated);
 
-        return redirect()->route('students.index')->with('success', 'Xogta ardayga waa la cusbooneysiiyay!');
+        return $this->redirectAfterChange($request)->with('success', 'Xogta ardayga waa la cusbooneysiiyay!');
     }
 
     // 7. Tirtir ardayga (Delete)
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $student = Student::findOrFail($id);
         $student->delete();
 
-        return redirect()->route('students.index')->with('success', 'Ardayga waa la tirtiray!');
+        return $this->redirectAfterChange($request)->with('success', 'Ardayga waa la tirtiray!');
+    }
+
+    private function redirectAfterChange(Request $request): RedirectResponse
+    {
+        if ($request->input('return_to') === 'unpaid') {
+            $search = $request->input('search');
+            $query = [];
+
+            if (is_string($search) && trim($search) !== '') {
+                $query['search'] = trim($search);
+            }
+
+            $paymentDate = $request->input('payment_date');
+
+            if (is_string($paymentDate) && trim($paymentDate) !== '') {
+                $query['payment_date'] = trim($paymentDate);
+            }
+
+            return redirect()->route('students.unpaid', $query);
+        }
+
+        return redirect()->route('students.index');
     }
 }

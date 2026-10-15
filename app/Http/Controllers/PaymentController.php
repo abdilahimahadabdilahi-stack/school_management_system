@@ -12,10 +12,17 @@ class PaymentController extends Controller
     // 1. Tusi dhammaan lacagaha
     public function index(Request $request)
     {
+        $validated = $request->validate([
+            'payment_date' => ['nullable', 'date_format:Y-m-d'],
+        ]);
         $search = trim((string) $request->input('search', ''));
+        $paymentDate = $validated['payment_date'] ?? '';
 
         $payments = Payment::query()
             ->with(['student', 'schoolClass'])
+            ->when($paymentDate !== '', function ($query) use ($paymentDate) {
+                $query->whereDate('payment_date', $paymentDate);
+            })
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($innerQuery) use ($search) {
                     $innerQuery->where('id', 'like', "%{$search}%")
@@ -30,7 +37,7 @@ class PaymentController extends Controller
             ->latest('payment_date')
             ->get();
 
-        return view('payments.index', compact('payments', 'search'));
+        return view('payments.index', compact('payments', 'search', 'paymentDate'));
     }
 
     // 2. Tusi form-ka lacagta cusub

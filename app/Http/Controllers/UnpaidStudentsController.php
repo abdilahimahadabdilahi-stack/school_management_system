@@ -3,12 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class UnpaidStudentsController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
+        $validated = $request->validate([
+            'payment_date' => ['nullable', 'date_format:Y-m-d'],
+        ]);
+        $paymentDate = $validated['payment_date'] ?? '';
+
         $students = Student::query()
             ->with(['parent', 'payments' => fn ($query) => $query->orderByDesc('payment_date')->orderByDesc('id')])
             ->get()
@@ -24,6 +31,7 @@ class UnpaidStudentsController extends Controller
                         'class_name' => $student->class_name ?? 'N/A',
                         'fee_amount_due' => '0.00',
                         'status' => 'Unpaid',
+                        'payment_date' => '',
                         'phone' => $student->parent?->phone ?? 'N/A',
                     ];
                 }
@@ -46,12 +54,33 @@ class UnpaidStudentsController extends Controller
                         'unpaid' => 'Unpaid',
                         default => ucfirst($status),
                     },
+                    'payment_date' => $latestPayment->payment_date?->format('Y-m-d') ?? '',
                     'phone' => $student->parent?->phone ?? 'N/A',
                 ];
             })
             ->filter()
             ->values();
 
-        return view('students.unpaid', compact('students'));
+        if ($paymentDate !== '') {
+            $students = $students->filter(
+                fn (array $student): bool => $student['payment_date'] === $paymentDate
+            )->values();
+        }
+
+        $search = trim($request->string('search')->toString());
+
+        if ($search !== '') {
+            $students = $students->filter(function (array $student) use ($search): bool {
+                foreach ($student as $value) {
+                    if (Str::contains((string) $value, $search, true)) {
+                        return true;
+                    }
+                }
+
+                return false;
+            })->values();
+        }
+
+        return view('students.unpaid', compact('students', 'search', 'paymentDate'));
     }
 }
