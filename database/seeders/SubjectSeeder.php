@@ -15,12 +15,17 @@ class SubjectSeeder extends Seeder
             'Tarbiya (Islamic Studies)',
             'Arabic',
             'Social Studies',
-            'Maths',
+            'Mathematics',
             'Science',
             'English',
             'Physics',
             'Chemistry',
         ];
+
+        Subject::query()->where('name', 'Maths')->update([
+            'name' => 'Mathematics',
+            'slug' => 'mathematics',
+        ]);
 
         foreach ($subjects as $sortOrder => $name) {
             $subject = Subject::updateOrCreate(

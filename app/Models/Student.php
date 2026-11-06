@@ -53,10 +53,12 @@ class Student extends Model
      */
     public function examResultsTotals(Exam $exam, ?Collection $existingResults = null, ?Collection $subjects = null): array
     {
-        $results = $existingResults ?? $this->examResults()
+        $results = collect($existingResults ?? $this->examResults()
             ->where('exam_id', $exam->id)
             ->with('subjectRecord')
-            ->get();
+            ->get())
+            ->where('student_id', $this->id)
+            ->values();
 
         $subjects = $subjects ?? Subject::query()->orderBy('sort_order')->get();
 

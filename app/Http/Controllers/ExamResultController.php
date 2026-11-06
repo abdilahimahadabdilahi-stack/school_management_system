@@ -32,10 +32,11 @@ class ExamResultController extends Controller
             ->orderBy('name')
             ->get();
         $results = $exam->results()->with(['student', 'subjectRecord'])->get();
+        $subjectsForTotals = $this->subjectsRecordedForExam($subjects, $results);
 
-        $studentSummaries = $students->mapWithKeys(function (Student $student) use ($exam, $results, $subjects): array {
+        $studentSummaries = $students->mapWithKeys(function (Student $student) use ($exam, $results, $subjectsForTotals): array {
             $studentResults = $results->where('student_id', $student->id);
-            $summary = $student->examResultsTotals($exam, $studentResults, $subjects);
+            $summary = $student->examResultsTotals($exam, $studentResults, $subjectsForTotals);
 
             return [
                 $student->id => [
@@ -178,7 +179,7 @@ class ExamResultController extends Controller
             'Tarbiya (Islamic Studies)',
             'Arabic',
             'Social Studies',
-            'Maths',
+            'Mathematics',
             'Science',
             'English',
             'Physics',
@@ -196,6 +197,18 @@ class ExamResultController extends Controller
         }
 
         return Subject::query()->orderBy('sort_order')->get();
+    }
+
+    private function subjectsRecordedForExam(Collection $catalog, Collection $results): Collection
+    {
+        $recordedSubjects = $catalog->filter(function (Subject $subject) use ($results): bool {
+            return $results->contains(
+                fn (ExamResult $result): bool => (int) $result->subject_id === (int) $subject->id
+                    || ($result->subject_id === null && $result->subject === $subject->name),
+            );
+        })->values();
+
+        return $recordedSubjects->isNotEmpty() ? $recordedSubjects : $catalog;
     }
 
     private function gradeForPercentage(float $percentage): string
