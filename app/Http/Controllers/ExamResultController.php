@@ -10,6 +10,8 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class ExamResultController extends Controller
 {
@@ -19,6 +21,7 @@ class ExamResultController extends Controller
     {
         $search = $request->string('search')->trim()->toString();
         $subjects = $this->subjectCatalog();
+        /** @var \Illuminate\Database\Eloquent\Collection<int, Student> $students */
         $students = Student::query()
             ->when($search, function ($query, string $search): void {
                 $query->where(function ($studentQuery) use ($search): void {
@@ -32,7 +35,8 @@ class ExamResultController extends Controller
             ->orderBy('name')
             ->get();
         $results = $exam->results()->with(['student', 'subjectRecord'])->get();
-        $subjectsForTotals = $this->subjectsRecordedForExam($subjects, $results);
+        $catalog = Subject::query()->orderBy('sort_order')->get();
+        $subjectsForTotals = $this->subjectsRecordedForExam($catalog, $results);
 
         $studentSummaries = $students->mapWithKeys(function (Student $student) use ($exam, $results, $subjectsForTotals): array {
             $studentResults = $results->where('student_id', $student->id);
@@ -80,7 +84,7 @@ class ExamResultController extends Controller
     {
         $validated = $request->validate([
             'student_id' => ['required', 'integer', 'exists:students,id'],
-            'subject_id' => ['required', 'integer', 'exists:subjects,id'],
+            'subject_id' => ['required', 'integer', Rule::exists('subjects', 'id')->whereIn('slug', array_keys(Subject::CORE_SUBJECTS))],
             'marks_obtained' => ['required', 'numeric', 'min:0', 'lte:total_marks'],
             'total_marks' => ['required', 'numeric', 'gt:0'],
         ]);
@@ -104,14 +108,14 @@ class ExamResultController extends Controller
 
     public function show(Exam $exam, ExamResult $examResult): View
     {
-        $examResult = $exam->results()->with('student')->findOrFail($examResult->id);
+        $examResult = $exam->results()->with('student')->whereKey($examResult->id)->firstOrFail();
 
         return view('exams.results.show', compact('exam', 'examResult'));
     }
 
     public function edit(Exam $exam, ExamResult $examResult): View
     {
-        $examResult = $exam->results()->with('student')->findOrFail($examResult->id);
+        $examResult = $exam->results()->with('student')->whereKey($examResult->id)->firstOrFail();
         $students = Student::query()->orderBy('name')->get(['id', 'name']);
         $subjects = $this->subjectCatalog();
 
@@ -120,23 +124,27 @@ class ExamResultController extends Controller
 
     public function update(Request $request, Exam $exam, ExamResult $examResult): RedirectResponse
     {
-        $examResult = $exam->results()->findOrFail($examResult->id);
+        $examResultId = $examResult->getKey();
+        $exam->results()->whereKey($examResultId)->firstOrFail();
 
         $validated = $request->validate([
             'student_id' => ['required', 'integer', 'exists:students,id'],
-            'subject_id' => ['required', 'integer', 'exists:subjects,id'],
+            'subject_id' => ['required', 'integer', Rule::exists('subjects', 'id')->whereIn('slug', array_keys(Subject::CORE_SUBJECTS))],
             'marks_obtained' => ['required', 'numeric', 'min:0', 'lte:total_marks'],
             'total_marks' => ['required', 'numeric', 'gt:0'],
         ]);
         $subject = Subject::findOrFail($validated['subject_id']);
 
-        $examResult->update([
-            'student_id' => $validated['student_id'],
-            'subject_id' => $subject->id,
-            'subject' => $subject->name,
-            'marks_obtained' => $validated['marks_obtained'],
-            'total_marks' => $validated['total_marks'],
-        ]);
+        DB::table('exam_results')
+            ->where('exam_id', $exam->getKey())
+            ->where('id', $examResultId)
+            ->update([
+                'student_id' => $validated['student_id'],
+                'subject_id' => $subject->getKey(),
+                'subject' => $subject->name,
+                'marks_obtained' => $validated['marks_obtained'],
+                'total_marks' => $validated['total_marks'],
+            ]);
 
         return redirect()
             ->route('exams.results', $exam)
@@ -145,8 +153,12 @@ class ExamResultController extends Controller
 
     public function destroy(Exam $exam, ExamResult $examResult): RedirectResponse
     {
-        $examResult = $exam->results()->findOrFail($examResult->id);
-        $examResult->delete();
+        $examResultId = $examResult->getKey();
+        $exam->results()->whereKey($examResultId)->firstOrFail();
+        DB::table('exam_results')
+            ->where('exam_id', $exam->getKey())
+            ->where('id', $examResultId)
+            ->delete();
 
         return redirect()
             ->route('exams.results', $exam)
@@ -168,35 +180,24 @@ class ExamResultController extends Controller
      */
     private function subjectCatalog(): Collection
     {
-        $subjects = Subject::query()->orderBy('sort_order')->get();
+        $subjects = Subject::core()->orderBy('sort_order')->get();
 
         if ($subjects->isNotEmpty()) {
             return $subjects;
         }
 
-        $defaultSubjects = [
-            'Somali',
-            'Tarbiya (Islamic Studies)',
-            'Arabic',
-            'Social Studies',
-            'Mathematics',
-            'Science',
-            'English',
-            'Physics',
-            'Chemistry',
-        ];
-
-        foreach ($defaultSubjects as $index => $name) {
+        foreach (Subject::CORE_SUBJECTS as $slug => $name) {
             Subject::firstOrCreate(
-                ['name' => $name],
+                ['slug' => $slug],
                 [
+                    'name' => $name,
                     'slug' => str($name)->slug(),
-                    'sort_order' => $index + 1,
+                    'sort_order' => array_search($slug, array_keys(Subject::CORE_SUBJECTS), true) + 1,
                 ],
             );
         }
 
-        return Subject::query()->orderBy('sort_order')->get();
+        return Subject::core()->orderBy('sort_order')->get();
     }
 
     private function subjectsRecordedForExam(Collection $catalog, Collection $results): Collection
@@ -204,7 +205,7 @@ class ExamResultController extends Controller
         $recordedSubjects = $catalog->filter(function (Subject $subject) use ($results): bool {
             return $results->contains(
                 fn (ExamResult $result): bool => (int) $result->subject_id === (int) $subject->id
-                    || ($result->subject_id === null && $result->subject === $subject->name),
+                    || $result->subject_id === null && $result->subject === $subject->name,
             );
         })->values();
 

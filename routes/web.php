@@ -12,9 +12,11 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\StudentRankingController;
 use App\Http\Controllers\TeacherController;
-use App\Models\Exam;
+use App\Http\Controllers\UnpaidStudentsController;
 // Controllers
+use App\Models\Exam;
 use App\Models\Manager;
 use App\Models\Payment;
 use App\Models\SchoolClass;
@@ -25,6 +27,7 @@ use App\Models\Student;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 if (file_exists(__DIR__.'/auth.php')) {
@@ -56,7 +59,7 @@ Route::middleware(['auth'])->group(function () {
 
     // 1. ROUTES EE LOO OGOL YAHAY TEACHER, MANAGER & ADMIN (Student, Exam, Attendance, Classes & School Setup)
     Route::middleware(['role:admin,manager,teacher'])->group(function () {
-        Route::get('/students/unpaid', [\App\Http\Controllers\UnpaidStudentsController::class, 'index'])->name('students.unpaid');
+        Route::get('/students/unpaid', [UnpaidStudentsController::class, 'index'])->name('students.unpaid');
         Route::resource('students', StudentController::class);
         Route::resource('exams', ExamController::class);
         Route::get('/exams/{exam}/results', [ExamResultController::class, 'results'])->name('exams.results');
@@ -67,6 +70,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/exams/{exam}/results/{examResult}', [ExamResultController::class, 'destroy'])->name('exams.results.destroy');
         Route::resource('attendance', AttendanceController::class);
         Route::resource('classes', SchoolClassController::class);
+        Route::get('/rankings', [StudentRankingController::class, 'index'])->name('rankings.index');
         Route::resource('announcements', AnnouncementController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
 
         // Routes-ka Cusub ee SCHOOL_DBS Form-ka
@@ -77,8 +81,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/school/store', function (Request $request) {
             try {
                 DB::table('students')->insert([
-                    'name' => $request->student_name,
-                    'class' => $request->class,
+                    'name' => $request->input('student_name'),
+                    'class' => $request->input('class'),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);

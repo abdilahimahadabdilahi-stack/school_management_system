@@ -2,12 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $class_name
+ * @property string|null $section
+ */
 class Student extends Model
 {
     use HasFactory;
@@ -45,6 +52,21 @@ class Student extends Model
     public function examResults(): HasMany
     {
         return $this->hasMany(ExamResult::class);
+    }
+
+    public function scopeWithExamPerformance(Builder $query): Builder
+    {
+        $examPerformance = ExamResult::query()
+            ->selectRaw('student_id, SUM(marks_obtained) AS total_obtained, SUM(total_marks) AS total_possible_marks')
+            ->where('total_marks', '>', 0)
+            ->groupBy('student_id');
+
+        return $query
+            ->joinSub($examPerformance, 'exam_performance', 'exam_performance.student_id', '=', 'students.id')
+            ->addSelect([
+                'exam_performance.total_obtained',
+                'exam_performance.total_possible_marks',
+            ]);
     }
 
     /**

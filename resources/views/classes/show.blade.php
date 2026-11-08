@@ -46,6 +46,7 @@
                 <a href="{{ route('classes.edit', $schoolClass->id) }}" class="btn btn-warning text-white">
                     <i class="fa-solid fa-pen-to-square me-1"></i>Edit
                 </a>
+                <a href="{{ route('rankings.index', ['class_id' => $schoolClass->id]) }}" class="btn btn-outline-primary">Class Top 10</a>
                 <form action="{{ route('classes.destroy', $schoolClass->id) }}" method="POST" onsubmit="return confirm('Ma hubtaa inaad tirtirto fasalkan?');">
                     @csrf
                     @method('DELETE')

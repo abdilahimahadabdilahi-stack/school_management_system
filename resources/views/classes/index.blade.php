@@ -4,11 +4,16 @@
 
 @section('content')
 
+@php
+    /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\SchoolClass> $classes */
+@endphp
+
 <div class="container bg-white p-4 rounded shadow-sm">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fa-solid fa-school me-2"></i>List of Classes</h2>
         <div>
             <a href="{{ route('dashboard') }}" class="btn btn-secondary me-2"><i class="fa-solid fa-arrow-left me-1"></i>Dashboard</a>
+            <a href="{{ route('rankings.index') }}" class="btn btn-outline-primary me-2">School Top 10</a>
             <a href="{{ route('classes.create') }}" class="btn btn-primary">+ Add New Class</a>
         </div>
     </div>

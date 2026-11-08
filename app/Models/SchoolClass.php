@@ -5,7 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @property int $id
+ * @property int $class_number
+ * @property string $section
+ * @property string $class_label
+ * @property int $capacity
+ * @property int $students_count
+ */
 class SchoolClass extends Model
 {
     use HasFactory;
@@ -24,6 +33,11 @@ class SchoolClass extends Model
     public function students()
     {
         return $this->hasMany(Student::class, 'class_name', 'class_label');
+    }
+
+    public function subjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Subject::class, 'school_class_subject')->withTimestamps();
     }
 
     public function studentsForDisplay(): Builder

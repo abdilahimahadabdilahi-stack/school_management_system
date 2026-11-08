@@ -59,6 +59,19 @@ class SearchFilterTest extends TestCase
         $response->assertDontSee('Final Exam');
     }
 
+    public function test_paginated_pages_use_bootstrap_pagination_controls(): void
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        Exam::factory()->count(11)->create();
+
+        $response = $this->actingAs($user)->get(route('exams.index'));
+
+        $response->assertOk()
+            ->assertSee('class="pagination"', false)
+            ->assertSee('page-item', false)
+            ->assertDontSee('w-5 h-5', false);
+    }
+
     public function test_payments_index_can_filter_by_student_name_or_payment_date(): void
     {
         $user = User::factory()->create(['role' => 'admin']);

@@ -35,13 +35,10 @@
                     </select>
                 </div>
 
-                <!-- Section -->
                 <div class="mb-3">
                     <label class="form-label">Section</label>
-                    <select name="section" class="form-select" required>
-                        <option value="A" {{ old('section', $schoolClass->section) == 'A' ? 'selected' : '' }}>Section A</option>
-                        <option value="B" {{ old('section', $schoolClass->section) == 'B' ? 'selected' : '' }}>Section B</option>
-                    </select>
+                    <input type="text" name="section" class="form-control @error('section') is-invalid @enderror" value="{{ old('section', $schoolClass->section) }}" maxlength="50" required>
+                    @error('section') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
 
                 <!-- Class Teacher -->
@@ -55,6 +52,22 @@
                     <label class="form-label">Capacity</label>
                     <input type="number" name="capacity" class="form-control" value="{{ old('capacity', $schoolClass->capacity) }}" min="1" max="100">
                 </div>
+
+                <fieldset class="mb-4">
+                    <legend class="form-label fw-semibold">Subjects for this class <span class="text-muted fw-normal">(optional)</span></legend>
+                    <div class="row g-2">
+                        @foreach($subjects as $subject)
+                            <div class="col-sm-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="subject_ids[]" value="{{ $subject->id }}" id="subject-{{ $subject->id }}" @checked(in_array($subject->id, old('subject_ids', $selectedSubjectIds)))>
+                                    <label class="form-check-label" for="subject-{{ $subject->id }}">{{ $subject->name }}</label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    @error('subject_ids') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                    @error('subject_ids.*') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                </fieldset>
 
                 <button type="submit" class="btn btn-warning w-100 fw-bold py-2 text-white">Update Class</button>
             </form>

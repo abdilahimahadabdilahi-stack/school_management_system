@@ -110,6 +110,36 @@ class ExamResultsTest extends TestCase
         $response->assertSee('Class B');
         $response->assertSee('Section Blue');
         $response->assertSee('name="subject_id"', false);
+        $response->assertViewHas('subjects', function ($subjects): bool {
+            return $subjects->count() === count(Subject::CORE_SUBJECTS)
+                && $subjects->pluck('slug')->intersect(['physics', 'chemistry'])->isEmpty();
+        });
+    }
+
+    public function test_physics_and_chemistry_cannot_be_selected_for_new_exam_results(): void
+    {
+        $exam = Exam::factory()->create();
+        $student = Student::factory()->create();
+        $user = User::factory()->create(['role' => 'admin']);
+
+        foreach (['physics', 'chemistry'] as $slug) {
+            $subject = Subject::where('slug', $slug)->firstOrFail();
+
+            $this->actingAs($user)
+                ->post(route('exams.results.store', $exam), [
+                    'student_id' => $student->id,
+                    'subject_id' => $subject->id,
+                    'marks_obtained' => 50,
+                    'total_marks' => 100,
+                ])
+                ->assertSessionHasErrors('subject_id');
+
+            $this->assertDatabaseMissing('exam_results', [
+                'exam_id' => $exam->id,
+                'student_id' => $student->id,
+                'subject_id' => $subject->id,
+            ]);
+        }
     }
 
     public function test_empty_subject_catalog_is_rebuilt_when_results_page_loads(): void
@@ -120,9 +150,11 @@ class ExamResultsTest extends TestCase
         $this->actingAs(User::factory()->create(['role' => 'admin']))
             ->get(route('exams.results', $exam))
             ->assertOk()
-            ->assertSee('Mathematics');
+            ->assertSee('Mathematics')
+            ->assertSee('Af-Somali');
 
         $this->assertDatabaseHas('subjects', ['name' => 'Mathematics']);
+        $this->assertDatabaseHas('subjects', ['name' => 'Tarbia (Islamic Studies)']);
     }
 
     public function test_exam_result_can_be_viewed_updated_and_deleted(): void

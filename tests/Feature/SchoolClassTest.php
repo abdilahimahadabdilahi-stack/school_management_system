@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\SchoolClass;
 use App\Models\Student;
+use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -33,6 +34,71 @@ class SchoolClassTest extends TestCase
         $response->assertOk()
             ->assertSee(route('classes.show', $firstClass))
             ->assertSee(route('classes.show', $secondClass));
+    }
+
+    public function test_a_new_section_can_be_added_to_an_existing_class_level(): void
+    {
+        $user = User::factory()->create(['role' => 'teacher']);
+
+        $response = $this->actingAs($user)->post(route('classes.store'), [
+            'class_number' => 1,
+            'section' => 'C',
+            'capacity' => 40,
+        ]);
+
+        $response->assertRedirect(route('classes.index'));
+        $this->assertDatabaseHas('school_classes', [
+            'class_number' => 1,
+            'section' => 'C',
+            'class_label' => '1C',
+        ]);
+    }
+
+    public function test_class_subjects_can_be_assigned_optionally(): void
+    {
+        $user = User::factory()->create(['role' => 'teacher']);
+        $subject = Subject::where('slug', 'mathematics')->firstOrFail();
+
+        $response = $this->actingAs($user)->post(route('classes.store'), [
+            'class_number' => 2,
+            'section' => 'A',
+            'subject_ids' => [$subject->id],
+        ]);
+
+        $response->assertRedirect(route('classes.index'));
+        $this->assertDatabaseHas('school_class_subject', [
+            'school_class_id' => SchoolClass::where('class_label', '2A')->value('id'),
+            'subject_id' => $subject->id,
+        ]);
+    }
+
+    public function test_class_subject_assignments_can_be_cleared_from_the_edit_form(): void
+    {
+        $user = User::factory()->create(['role' => 'teacher']);
+        $schoolClass = SchoolClass::create([
+            'class_number' => 3,
+            'section' => 'A',
+            'class_label' => '3A',
+            'capacity' => 40,
+        ]);
+        $subject = Subject::where('slug', 'mathematics')->firstOrFail();
+        $schoolClass->subjects()->attach($subject);
+
+        $this->actingAs($user)
+            ->get(route('classes.edit', $schoolClass))
+            ->assertOk()
+            ->assertSee('Mathematics');
+
+        $this->actingAs($user)->put(route('classes.update', $schoolClass), [
+            'class_number' => 3,
+            'section' => 'A',
+            'capacity' => 40,
+        ])->assertRedirect(route('classes.index'));
+
+        $this->assertDatabaseMissing('school_class_subject', [
+            'school_class_id' => $schoolClass->id,
+            'subject_id' => $subject->id,
+        ]);
     }
 
     public function test_class_page_only_displays_students_from_that_class(): void

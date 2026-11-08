@@ -11,15 +11,13 @@ class SubjectSeeder extends Seeder
     public function run(): void
     {
         $subjects = [
-            'Somali',
-            'Tarbiya (Islamic Studies)',
+            'Tarbia (Islamic Studies)',
             'Arabic',
-            'Social Studies',
-            'Mathematics',
-            'Science',
+            'Af-Somali',
             'English',
-            'Physics',
-            'Chemistry',
+            'Science',
+            'Mathematics',
+            'Social Studies',
         ];
 
         Subject::query()->where('name', 'Maths')->update([

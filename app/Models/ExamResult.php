@@ -6,6 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $exam_id
+ * @property int $student_id
+ * @property int|null $subject_id
+ * @property string $subject
+ * @property float $marks_obtained
+ * @property float $total_marks
+ */
 class ExamResult extends Model
 {
     use HasFactory;

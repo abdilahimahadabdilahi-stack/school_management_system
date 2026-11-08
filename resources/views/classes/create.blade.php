@@ -38,14 +38,9 @@
                     @enderror
                 </div>
 
-                <!-- Section -->
                 <div class="mb-3">
                     <label class="form-label">Section</label>
-                    <select name="section" class="form-select @error('section') is-invalid @enderror" required>
-                        <option value="">-- Select Section --</option>
-                        <option value="A" {{ old('section') == 'A' ? 'selected' : '' }}>Section A</option>
-                        <option value="B" {{ old('section') == 'B' ? 'selected' : '' }}>Section B</option>
-                    </select>
+                    <input type="text" name="section" class="form-control @error('section') is-invalid @enderror" value="{{ old('section') }}" placeholder="A, B, C..." maxlength="50" required>
                     @error('section')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -68,6 +63,22 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+
+                <fieldset class="mb-4">
+                    <legend class="form-label fw-semibold">Subjects for this class <span class="text-muted fw-normal">(optional)</span></legend>
+                    <div class="row g-2">
+                        @foreach($subjects as $subject)
+                            <div class="col-sm-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="subject_ids[]" value="{{ $subject->id }}" id="subject-{{ $subject->id }}" @checked(in_array($subject->id, old('subject_ids', [])))>
+                                    <label class="form-check-label" for="subject-{{ $subject->id }}">{{ $subject->name }}</label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    @error('subject_ids') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                    @error('subject_ids.*') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                </fieldset>
 
                 <button type="submit" class="btn btn-primary w-100 fw-bold py-2">Save Class</button>
             </form>
