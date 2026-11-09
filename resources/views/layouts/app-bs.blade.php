@@ -503,6 +503,7 @@
 
             <footer class="text-center text-muted small pt-4 pb-2">
                 Eng. Abdirahman Mahad
+                <div class="mt-1">System Version: <span class="fw-semibold">v{{ config('app.version') }}</span></div>
             </footer>
         </main>
     </div>

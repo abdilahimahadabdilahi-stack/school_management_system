@@ -73,6 +73,18 @@ class SecurityTest extends TestCase
             ->assertDontSee('Register Admin / Teacher');
     }
 
+    public function test_dashboard_displays_the_configured_system_version(): void
+    {
+        config(['app.version' => '2.4.1']);
+        $user = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($user)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('System Version:')
+            ->assertSee('v2.4.1');
+    }
+
     public function test_creating_parent_logs_security_audit_event(): void
     {
         $adminUser = User::factory()->create(['role' => 'admin']);
