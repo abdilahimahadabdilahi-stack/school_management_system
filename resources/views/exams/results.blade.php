@@ -20,10 +20,21 @@
     </div>
 
     <form method="GET" action="{{ route('exams.results', $exam) }}" class="row g-2 mb-4 no-print">
-        <div class="col-md-10">
+        <div class="col-md-5">
             <input type="search" name="search" value="{{ $search }}" class="form-control" placeholder="Search student by ID or name">
         </div>
-        <div class="col-md-2 d-grid">
+        <div class="col-md-4">
+            <label for="results-class" class="visually-hidden">Filter by class</label>
+            <select id="results-class" name="class_id" class="form-select">
+                <option value="">All classes</option>
+                @foreach($classes as $class)
+                    <option value="{{ $class->id }}" @selected($selectedClass?->id === $class->id)>
+                        {{ $class->class_label }} (Section {{ $class->section }})
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-3 d-grid">
             <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-search me-1"></i> Search</button>
         </div>
     </form>
@@ -67,7 +78,7 @@
 
     <div class="d-flex flex-wrap gap-2 mb-3 no-print">
         @foreach(['all' => 'All Students', 'passed' => 'Passed', 'failed' => 'Failed', 'average' => 'Average / Intermediate'] as $value => $label)
-            <a href="{{ route('exams.results', [$exam, 'status' => $value, 'search' => $search]) }}" class="btn {{ ($filter ?: 'all') === $value ? 'btn-primary' : 'btn-outline-secondary' }}">
+            <a href="{{ route('exams.results', ['exam' => $exam->id, 'status' => $value, 'search' => $search, 'class_id' => $selectedClass?->id]) }}" class="btn {{ ($filter ?: 'all') === $value ? 'btn-primary' : 'btn-outline-secondary' }}">
                 {{ $label }}
             </a>
         @endforeach

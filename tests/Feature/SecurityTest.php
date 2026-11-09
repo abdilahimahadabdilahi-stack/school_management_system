@@ -43,6 +43,36 @@ class SecurityTest extends TestCase
         $response->assertStatus(403);
     }
 
+    public function test_teachers_cannot_access_student_or_class_pages(): void
+    {
+        $teacherUser = User::factory()->create(['role' => 'teacher']);
+
+        $this->actingAs($teacherUser)
+            ->get(route('students.index'))
+            ->assertForbidden();
+
+        $this->actingAs($teacherUser)
+            ->get(route('students.unpaid'))
+            ->assertForbidden();
+
+        $this->actingAs($teacherUser)
+            ->get(route('classes.index'))
+            ->assertForbidden();
+    }
+
+    public function test_teacher_dashboard_hides_student_and_class_management_links(): void
+    {
+        $teacherUser = User::factory()->create(['role' => 'teacher']);
+
+        $this->actingAs($teacherUser)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertDontSee('Manage Students')
+            ->assertDontSee('Manage Classes')
+            ->assertDontSee('Add New Student')
+            ->assertDontSee('Register Admin / Teacher');
+    }
+
     public function test_creating_parent_logs_security_audit_event(): void
     {
         $adminUser = User::factory()->create(['role' => 'admin']);

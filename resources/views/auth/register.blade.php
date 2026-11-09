@@ -90,7 +90,7 @@
     <div class="register-card my-4">
         <!-- Logo & Header -->
         <div class="text-center mb-3">
-            <img src="{{ asset('images/alhuda-logo.svg') }}" alt="Alhuda Primary and Intermediate School" class="img-fluid mb-1" style="max-height: 150px;">
+            <img src="{{ asset('images/intifaac-primary-school-logo.svg') }}" alt="INTIFAAC PRIMARY SCHOOL" class="img-fluid mb-1" style="max-height: 150px;">
             <h3 class="fw-bold text-dark m-0">Register</h3>
             <p class="text-muted small mt-1">Samee akoon cusub oo maamul dugsiga</p>
         </div>
@@ -115,13 +115,11 @@
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
             </div>
 
-            <!-- Select Role -->
             <div class="mb-3">
-                <x-input-label for="role" :value="__('Select Role')" class="fw-semibold text-secondary" />
-                <select name="role" id="role" class="block mt-1 w-full form-control-custom bg-white" required>
-                    <option value="teacher" selected>Teacher</option>
-                    <option value="manager">Manager</option>
-                    <option value="admin">Admin</option>
+                <x-input-label for="role" :value="__('Role')" class="fw-semibold text-secondary" />
+                <select id="role" name="role" class="block mt-1 w-full form-control-custom" required>
+                    <option value="admin" @selected(old('role', 'teacher') === 'admin')>Admin</option>
+                    <option value="teacher" @selected(old('role', 'teacher') === 'teacher')>Teacher</option>
                 </select>
                 <x-input-error :messages="$errors->get('role')" class="mt-2" />
             </div>

@@ -24,13 +24,24 @@
             <form action="{{ route('classes.store') }}" method="POST">
                 @csrf
 
+                <div class="mb-3">
+                    <label class="form-label">Department</label>
+                    <select name="class_type" class="form-select @error('class_type') is-invalid @enderror" required>
+                        <option value="primary" @selected(old('class_type', 'primary') === 'primary')>Primary</option>
+                        <option value="kindergarten" @selected(old('class_type') === 'kindergarten')>Kindergarten</option>
+                    </select>
+                    @error('class_type')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
                 <!-- Class Number -->
                 <div class="mb-3">
-                    <label class="form-label">Class Number (1-8)</label>
+                    <label class="form-label">Class Level (Primary 1-8, KG 1-3)</label>
                     <select name="class_number" class="form-select @error('class_number') is-invalid @enderror" required>
                         <option value="">-- Select Class --</option>
                         @for($i = 1; $i <= 8; $i++)
-                            <option value="{{ $i }}" {{ old('class_number') == $i ? 'selected' : '' }}>Class {{ $i }}</option>
+                            <option value="{{ $i }}" {{ old('class_number') == $i ? 'selected' : '' }}>Level {{ $i }}</option>
                         @endfor
                     </select>
                     @error('class_number')

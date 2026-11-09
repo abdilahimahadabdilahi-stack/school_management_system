@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Al-Huda Primary and Intermediate School: building knowledge, shaping character, and creating a brighter future.">
-    <title>Al-Huda Primary and Intermediate School</title>
+    <meta name="description" content="INTIFAAC PRIMARY SCHOOL: building knowledge, shaping character, and creating a brighter future.">
+    <title>INTIFAAC PRIMARY SCHOOL</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
@@ -115,8 +115,8 @@
 </head>
 <body>
     <header class="site-header">
-        <a class="brand" href="{{ route('home') }}" aria-label="Al-Huda School home">
-            <img src="{{ asset('images/alhuda-logo.svg') }}" alt="Al-Huda Primary and Intermediate School">
+        <a class="brand" href="{{ route('home') }}" aria-label="INTIFAAC PRIMARY SCHOOL home">
+            <img src="{{ asset('images/intifaac-primary-school-logo.svg') }}" alt="INTIFAAC PRIMARY SCHOOL">
         </a>
         <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" onclick="toggleMenu(this)"><i class="fa-solid fa-bars"></i></button>
         <nav class="main-nav" id="mainNav" aria-label="Main navigation">
@@ -134,7 +134,7 @@
         <section class="hero" aria-labelledby="hero-title">
             <div class="hero-copy">
                 <div class="eyebrow">Welcome to</div>
-                <h1 id="hero-title">AL-HUDA<br>Primary and Intermediate School</h1>
+                <h1 id="hero-title">INTIFAAC<br>PRIMARY SCHOOL</h1>
                 <p>Building knowledge <b>·</b> Shaping character <b>·</b> Creating a brighter future</p>
                 <a class="button" href="#about">Discover our school <i class="fa-solid fa-arrow-right"></i></a>
             </div>
@@ -148,11 +148,11 @@
         </section>
 
         <section class="about" id="about">
-            <div class="about-image" role="img" aria-label="Al-Huda school campus"></div>
+            <div class="about-image" role="img" aria-label="INTIFAAC PRIMARY SCHOOL campus"></div>
             <div>
                 <div class="section-kicker">About Our School</div>
                 <h2>A place to learn, grow and achieve</h2>
-                <p>Al-Huda Primary and Intermediate School is committed to providing high-quality education in a safe, supportive and nurturing environment. We aim to build confident, responsible and successful learners who make a positive difference in their communities and the world.</p>
+                <p>INTIFAAC PRIMARY SCHOOL is committed to providing high-quality education in a safe, supportive and nurturing environment. We aim to build confident, responsible and successful learners who make a positive difference in their communities and the world.</p>
                 <div class="quote">“Education is the key to a brighter future.”</div>
                 <a class="button" href="#admissions">Learn more <i class="fa-solid fa-arrow-right"></i></a>
             </div>
@@ -166,14 +166,14 @@
         <section class="contact-band" id="contact">
             <div>
                 <h2>We would love to hear from you</h2>
-                <p>Address: 31 May, Warshada Caanaha</p>
-                <p>Phone: <a href="tel:+252634444987">+252 63 4444987</a></p>
+                <p>Address: Abdaal</p>
+                <p>Phone: <a href="tel:+252634445604">+252 63 4445604</a></p>
             </div>
-            <a class="button light" href="mailto:abdilahimahadabdilahi@gmail.com"><i class="fa-solid fa-envelope"></i> abdilahimahadabdilahi@gmail.com</a>
+            <a class="button light" href="mailto:INTIFAACPRIMARYANDKGSCHOOL@gmail.com"><i class="fa-solid fa-envelope"></i> INTIFAACPRIMARYANDKGSCHOOL@gmail.com</a>
         </section>
     </main>
 
-    <footer>© {{ date('Y') }} Al-Huda Primary and Intermediate School. All rights reserved.</footer>
+    <footer>© {{ date('Y') }} INTIFAAC PRIMARY SCHOOL. All rights reserved.</footer>
     <script>
         function toggleMenu(button) {
             const navigation = document.getElementById('mainNav');

@@ -25,12 +25,20 @@
                 @csrf
                 @method('PUT')
 
+                <div class="mb-3">
+                    <label class="form-label">Department</label>
+                    <select name="class_type" class="form-select" required>
+                        <option value="primary" @selected(old('class_type', $schoolClass->class_type) === 'primary')>Primary</option>
+                        <option value="kindergarten" @selected(old('class_type', $schoolClass->class_type) === 'kindergarten')>Kindergarten</option>
+                    </select>
+                </div>
+
                 <!-- Class Number -->
                 <div class="mb-3">
-                    <label class="form-label">Class Number (1-8)</label>
+                    <label class="form-label">Class Level (Primary 1-8, KG 1-3)</label>
                     <select name="class_number" class="form-select" required>
                         @for($i = 1; $i <= 8; $i++)
-                            <option value="{{ $i }}" {{ old('class_number', $schoolClass->class_number) == $i ? 'selected' : '' }}>Class {{ $i }}</option>
+                            <option value="{{ $i }}" {{ old('class_number', $schoolClass->class_number) == $i ? 'selected' : '' }}>Level {{ $i }}</option>
                         @endfor
                     </select>
                 </div>

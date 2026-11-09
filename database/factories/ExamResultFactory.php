@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Exam;
 use App\Models\ExamResult;
 use App\Models\Student;
+use App\Models\Subject;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,13 +20,15 @@ class ExamResultFactory extends Factory
      */
     public function definition(): array
     {
-        $totalMarks = 100;
+        $totalMarks = $this->faker->randomElement([20, 25, 50, 75, 100]);
+        $subject = $this->faker->randomElement(array_values(Subject::CORE_SUBJECTS));
+        $percentage = $this->faker->randomFloat(2, 35, 100);
 
         return [
             'exam_id' => Exam::factory(),
             'student_id' => Student::factory(),
-            'subject' => $this->faker->randomElement(['Mathematics', 'English', 'Science']),
-            'marks_obtained' => $this->faker->randomFloat(2, 0, $totalMarks),
+            'subject' => $subject,
+            'marks_obtained' => round($totalMarks * $percentage / 100, 2),
             'total_marks' => $totalMarks,
         ];
     }

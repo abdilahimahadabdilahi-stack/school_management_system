@@ -90,7 +90,7 @@
     <div class="login-card">
         <!-- Logo & Header -->
         <div class="text-center mb-4">
-            <img src="{{ asset('images/alhuda-logo.svg') }}" alt="Alhuda Primary and Intermediate School" class="img-fluid mb-2" style="max-height: 150px;">
+            <img src="{{ asset('images/intifaac-primary-school-logo.svg') }}" alt="INTIFAAC PRIMARY SCHOOL" class="img-fluid mb-2" style="max-height: 150px;">
             <p class="text-muted small mt-1">Geli xogtaada si aad u gasho nidaamka</p>
         </div>
 

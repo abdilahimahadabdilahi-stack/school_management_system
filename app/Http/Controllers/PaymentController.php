@@ -44,7 +44,7 @@ class PaymentController extends Controller
     public function create()
     {
         $students = Student::orderBy('name')->get();
-        $classes = SchoolClass::orderBy('class_number')->orderBy('section')->get();
+        $classes = SchoolClass::ordered()->get();
 
         return view('payments.create', compact('students', 'classes'));
     }
@@ -103,7 +103,7 @@ class PaymentController extends Controller
     {
         $payment = Payment::findOrFail($id);
         $students = Student::orderBy('name')->get();
-        $classes = SchoolClass::orderBy('class_number')->orderBy('section')->get();
+        $classes = SchoolClass::ordered()->get();
 
         return view('payments.edit', compact('payment', 'students', 'classes'));
     }

@@ -9,10 +9,10 @@ class StaffFactory extends Factory
     public function definition(): array
     {
         return [
-            'name'  => $this->faker->name(),
+            'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'phone' => $this->faker->phoneNumber(),
-            'role'  => $this->faker->randomElement(['Accountant', 'HR Officer', 'Librarian', 'Administrator']),
+            'role' => $this->faker->randomElement(['Accountant', 'Librarian', 'Office Assistant', 'School Nurse', 'IT Support']),
         ];
     }
 }

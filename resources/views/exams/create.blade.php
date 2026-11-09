@@ -25,7 +25,13 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Subject</label>
-                            <input type="text" name="subject" class="form-control @error('subject') is-invalid @enderror" value="{{ old('subject') }}" placeholder="e.g. Mathematics, English, Physics" required>
+                            <select name="subject" class="form-select @error('subject') is-invalid @enderror" required>
+                                <option value="">Select a subject</option>
+                                <option value="All Subjects" @selected(old('subject') === 'All Subjects')>All Subjects</option>
+                                @foreach($subjects as $subjectName)
+                                    <option value="{{ $subjectName }}" @selected(old('subject') === $subjectName)>{{ $subjectName }}</option>
+                                @endforeach
+                            </select>
                             @error('subject') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 

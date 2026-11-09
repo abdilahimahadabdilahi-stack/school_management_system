@@ -14,10 +14,7 @@ class SchoolClassController extends Controller
     // 1. Tusi dhammaan fasallada
     public function index()
     {
-        $classes = SchoolClass::query()
-            ->orderBy('class_number')
-            ->orderBy('section')
-            ->get();
+        $classes = SchoolClass::ordered()->get();
         $classes->each(function (SchoolClass $schoolClass): void {
             $schoolClass->setAttribute('students_count', $schoolClass->studentsForDisplay()->count());
         });
@@ -38,6 +35,7 @@ class SchoolClassController extends Controller
     {
         $validated = $request->validate([
             'class_number' => 'required|integer|min:1|max:8',
+            'class_type' => ['sometimes', Rule::in(['primary', 'kindergarten'])],
             'section' => 'required|string|max:50',
             'class_teacher' => 'nullable|string|max:255',
             'capacity' => 'nullable|integer|min:1|max:100',
@@ -45,8 +43,13 @@ class SchoolClassController extends Controller
             'subject_ids.*' => ['integer', 'distinct', Rule::exists('subjects', 'id')->whereIn('slug', array_keys(Subject::CORE_SUBJECTS))],
         ]);
 
-        $section = trim($validated['section']);
-        $classLabel = $validated['class_number'].$section;
+        $classType = $validated['class_type'] ?? 'primary';
+        if ($classType === 'kindergarten' && $validated['class_number'] > 3) {
+            return back()->withErrors(['class_number' => 'Kindergarten levels must be between 1 and 3.'])->withInput();
+        }
+
+        $section = strtoupper(trim($validated['section']));
+        $classLabel = $this->classLabel($classType, $validated['class_number'], $section);
 
         // Hubi in fasalkan horey loo diiwaan geliyay
         $exists = SchoolClass::where('class_label', $classLabel)->exists();
@@ -55,6 +58,7 @@ class SchoolClassController extends Controller
         }
 
         $schoolClass = SchoolClass::create([
+            'class_type' => $classType,
             'class_number' => $validated['class_number'],
             'section' => $section,
             'class_label' => $classLabel,
@@ -95,6 +99,7 @@ class SchoolClassController extends Controller
 
         $validated = $request->validate([
             'class_number' => 'required|integer|min:1|max:8',
+            'class_type' => ['sometimes', Rule::in(['primary', 'kindergarten'])],
             'section' => 'required|string|max:50',
             'class_teacher' => 'nullable|string|max:255',
             'capacity' => 'nullable|integer|min:1|max:100',
@@ -102,8 +107,13 @@ class SchoolClassController extends Controller
             'subject_ids.*' => ['integer', 'distinct', Rule::exists('subjects', 'id')->whereIn('slug', array_keys(Subject::CORE_SUBJECTS))],
         ]);
 
-        $section = trim($validated['section']);
-        $classLabel = $validated['class_number'].$section;
+        $classType = $validated['class_type'] ?? 'primary';
+        if ($classType === 'kindergarten' && $validated['class_number'] > 3) {
+            return back()->withErrors(['class_number' => 'Kindergarten levels must be between 1 and 3.'])->withInput();
+        }
+
+        $section = strtoupper(trim($validated['section']));
+        $classLabel = $this->classLabel($classType, $validated['class_number'], $section);
 
         // Hubi in fasalkan horey loo diiwaan geliyay (iskaga reeb tan la wax ka beddelo)
         $exists = SchoolClass::where('class_label', $classLabel)->where('id', '!=', $id)->exists();
@@ -112,11 +122,16 @@ class SchoolClassController extends Controller
         }
 
         $schoolClass->update([
+            'class_type' => $classType,
             'class_number' => $validated['class_number'],
             'section' => $section,
             'class_label' => $classLabel,
             'class_teacher' => $validated['class_teacher'] ?? null,
             'capacity' => $validated['capacity'] ?? 40,
+        ]);
+        $schoolClass->students()->update([
+            'class_name' => $classLabel,
+            'section' => $section,
         ]);
         $schoolClass->subjects()->sync($validated['subject_ids'] ?? []);
 
@@ -130,5 +145,12 @@ class SchoolClassController extends Controller
         $schoolClass->delete();
 
         return redirect()->route('classes.index')->with('success', 'Fasalka waa la tirtiray!');
+    }
+
+    private function classLabel(string $classType, int $classNumber, string $section): string
+    {
+        return $classType === 'kindergarten'
+            ? "KG {$classNumber}{$section}"
+            : $classNumber.$section;
     }
 }

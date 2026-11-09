@@ -1,13 +1,16 @@
 <?php
 
+use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ExamResultController;
 // Models
+use App\Http\Controllers\KgEvaluationController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\ParentController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\StaffController;
@@ -41,8 +44,7 @@ Route::get('/', function () {
 // Protected Routes (LOGIN OO KALIYA AYAA GELI KARA)
 Route::middleware(['auth'])->group(function () {
 
-    // Dashboard: Dhammaan 3-da role (admin, manager, teacher) waad geli karaan
-    Route::get('/dashboard', function () {
+    $dashboard = function () {
         return view('welcome', [
             'students_count' => Student::count(),
             'teachers_count' => Teacher::count(),
@@ -55,12 +57,28 @@ Route::middleware(['auth'])->group(function () {
             'reports_count' => 3,
             'recent_logs' => SecurityLog::with('user')->latest()->take(5)->get(),
         ]);
-    })->name('dashboard');
+    };
 
-    // 1. ROUTES EE LOO OGOL YAHAY TEACHER, MANAGER & ADMIN (Student, Exam, Attendance, Classes & School Setup)
-    Route::middleware(['role:admin,manager,teacher'])->group(function () {
+    Route::get('/dashboard', $dashboard)->name('dashboard');
+    Route::get('/admin/dashboard', $dashboard)
+        ->middleware('role:admin')
+        ->name('admin.dashboard');
+    Route::get('/teacher/portal', $dashboard)
+        ->middleware('role:teacher')
+        ->name('teacher.portal');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::middleware(['role:admin,manager'])->group(function () {
         Route::get('/students/unpaid', [UnpaidStudentsController::class, 'index'])->name('students.unpaid');
         Route::resource('students', StudentController::class);
+        Route::resource('classes', SchoolClassController::class);
+    });
+
+    // Shared academic resources for teachers, managers, and admins.
+    Route::middleware(['role:admin,manager,teacher'])->group(function () {
         Route::resource('exams', ExamController::class);
         Route::get('/exams/{exam}/results', [ExamResultController::class, 'results'])->name('exams.results');
         Route::post('/exams/{exam}/results', [ExamResultController::class, 'storeResult'])->name('exams.results.store');
@@ -69,7 +87,9 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/exams/{exam}/results/{examResult}', [ExamResultController::class, 'update'])->name('exams.results.update');
         Route::delete('/exams/{exam}/results/{examResult}', [ExamResultController::class, 'destroy'])->name('exams.results.destroy');
         Route::resource('attendance', AttendanceController::class);
-        Route::resource('classes', SchoolClassController::class);
+        Route::get('/kg-evaluations', [KgEvaluationController::class, 'index'])->name('kg-evaluations.index');
+        Route::get('/kg-evaluations/create', [KgEvaluationController::class, 'create'])->name('kg-evaluations.create');
+        Route::post('/kg-evaluations', [KgEvaluationController::class, 'store'])->name('kg-evaluations.store');
         Route::get('/rankings', [StudentRankingController::class, 'index'])->name('rankings.index');
         Route::resource('announcements', AnnouncementController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
 
@@ -102,18 +122,16 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('parents', ParentController::class);
         Route::resource('payments', PaymentController::class);
 
+        Route::middleware(['role:admin'])->group(function () {
+            Route::get('/admin/users/create', [AdminUserController::class, 'create'])->name('admin-users.create');
+            Route::post('/admin/users', [AdminUserController::class, 'store'])->name('admin-users.store');
+        });
+
         // Reports Routes
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+        Route::delete('/reports/users/{user}', [ReportController::class, 'destroy'])
+            ->name('reports.users.destroy');
         Route::get('/reports/{report}', [ReportController::class, 'show'])->name('reports.show');
     });
-
-    // Logout
-    Route::post('/logout', function (Request $request) {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect('/login');
-    })->name('logout');
 
 });

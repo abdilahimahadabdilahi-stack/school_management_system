@@ -28,10 +28,7 @@ class AttendanceController extends Controller
             ->whereDate('attendance_date', $date)
             ->when($classId, fn (Builder $query): Builder => $query->where('class_id', $classId))
             ->get();
-        $classes = SchoolClass::query()
-            ->orderBy('class_number')
-            ->orderBy('section')
-            ->get();
+        $classes = SchoolClass::ordered()->get();
 
         return view('attendance.index', compact('attendances', 'date', 'classes', 'classId'));
     }
@@ -44,10 +41,7 @@ class AttendanceController extends Controller
         ]);
         $date = $filters['date'] ?? today()->toDateString();
         $classId = $filters['class_id'] ?? null;
-        $classes = SchoolClass::query()
-            ->orderBy('class_number')
-            ->orderBy('section')
-            ->get();
+        $classes = SchoolClass::ordered()->get();
         $schoolClass = $classId ? SchoolClass::findOrFail($classId) : null;
         $students = $schoolClass
             ? $schoolClass->studentsForDisplay()->orderBy('name')->get()

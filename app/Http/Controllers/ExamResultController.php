@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Exam;
 use App\Models\ExamResult;
+use App\Models\SchoolClass;
 use App\Models\Student;
 use App\Models\Subject;
 use Illuminate\Contracts\View\View;
@@ -19,10 +20,18 @@ class ExamResultController extends Controller
 
     public function results(Request $request, Exam $exam): View
     {
+        $filters = $request->validate([
+            'class_id' => ['nullable', 'integer', Rule::exists('school_classes', 'id')],
+        ]);
         $search = $request->string('search')->trim()->toString();
         $subjects = $this->subjectCatalog();
+        $classes = SchoolClass::ordered()->get();
+        $selectedClass = isset($filters['class_id'])
+            ? $classes->firstWhere('id', $filters['class_id'])
+            : null;
+        $studentQuery = $selectedClass?->studentsForDisplay() ?? Student::query();
         /** @var \Illuminate\Database\Eloquent\Collection<int, Student> $students */
-        $students = Student::query()
+        $students = $studentQuery
             ->when($search, function ($query, string $search): void {
                 $query->where(function ($studentQuery) use ($search): void {
                     $studentQuery
@@ -70,6 +79,8 @@ class ExamResultController extends Controller
             'exam',
             'subjects',
             'students',
+            'classes',
+            'selectedClass',
             'studentSummaries',
             'filteredSummaries',
             'classAverage',

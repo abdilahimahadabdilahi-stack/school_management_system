@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Dashboard') - Alhuda Primary and Intermediate School</title>
+    <title>@yield('title', 'Dashboard') - INTIFAAC PRIMARY SCHOOL</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome 6 Icons -->
@@ -324,7 +324,7 @@
     <nav id="sidebar">
         <div class="sidebar-header d-flex align-items-center justify-content-between">
             <a href="{{ route('dashboard') }}" class="text-decoration-none d-flex align-items-center">
-                <img src="{{ asset('images/alhuda-logo.svg') }}" alt="Alhuda Primary and Intermediate School" class="img-fluid" style="width: 190px; height: 72px; object-fit: contain;">
+                <img src="{{ asset('images/intifaac-primary-school-logo.svg') }}" alt="INTIFAAC PRIMARY SCHOOL" class="img-fluid" style="width: 190px; height: 72px; object-fit: contain;">
             </a>
         </div>
 
@@ -335,12 +335,16 @@
                 </a>
             </li>
 
-            <!-- Shared Resources (Admin, Manager, Teacher) -->
-            <li class="{{ request()->routeIs('students.*') ? 'active' : '' }}">
-                <a href="{{ route('students.index') }}">
-                    <i class="fa-solid fa-user-graduate"></i> <span>Students</span>
-                </a>
-            </li>
+            @auth
+                @if(in_array(Auth::user()->role, ['admin', 'manager']))
+                    <li class="{{ request()->routeIs('students.*') ? 'active' : '' }}">
+                        <a href="{{ route('students.index') }}">
+                            <i class="fa-solid fa-user-graduate"></i> <span>Students</span>
+                        </a>
+                    </li>
+                @endif
+            @endauth
+
             <li class="{{ request()->routeIs('attendance.*') ? 'active' : '' }}">
                 <a href="{{ route('attendance.index') }}">
                     <i class="fa-solid fa-clipboard-user"></i> <span>Attendance</span>
@@ -351,11 +355,15 @@
                     <i class="fa-solid fa-file-pen"></i> <span>Exams &amp; Results</span>
                 </a>
             </li>
-            <li class="{{ request()->routeIs('classes.*') ? 'active' : '' }}">
-                <a href="{{ route('classes.index') }}">
-                    <i class="fa-solid fa-school"></i> <span>Classes</span>
-                </a>
-            </li>
+            @auth
+                @if(in_array(Auth::user()->role, ['admin', 'manager']))
+                    <li class="{{ request()->routeIs('classes.*') ? 'active' : '' }}">
+                        <a href="{{ route('classes.index') }}">
+                            <i class="fa-solid fa-school"></i> <span>Classes</span>
+                        </a>
+                    </li>
+                @endif
+            @endauth
             <li class="{{ request()->routeIs('announcements.*') ? 'active' : '' }}">
                 <a href="{{ route('announcements.index') }}">
                     <i class="fa-solid fa-bullhorn"></i> <span>Announcements</span>
@@ -375,6 +383,14 @@
             @auth
                 @if(in_array(Auth::user()->role, ['admin', 'manager']))
                     <div class="px-3 pt-3 pb-1 text-uppercase text-xs fw-bold text-slate-500 opacity-50" style="font-size: 0.7rem; letter-spacing: 0.05em;">Management</div>
+
+                    @if(Auth::user()->role === 'admin')
+                        <li class="{{ request()->routeIs('admin-users.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin-users.create') }}">
+                                <i class="fa-solid fa-user-shield"></i> <span>Register Admin / Teacher</span>
+                            </a>
+                        </li>
+                    @endif
 
                     <li class="{{ request()->routeIs('teachers.*') ? 'active' : '' }}">
                         <a href="{{ route('teachers.index') }}">

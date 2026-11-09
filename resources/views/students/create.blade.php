@@ -17,6 +17,7 @@
         <div class="card-body p-4">
             <form action="{{ route('students.store') }}" method="POST">
                 @csrf
+                <input type="hidden" name="subject_selection_present" value="1">
                 @if($returnToUnpaid)
                     <input type="hidden" name="return_to" value="unpaid">
                     <input type="hidden" name="search" value="{{ $returnSearch }}">
@@ -41,28 +42,19 @@
                     @enderror
                 </div>
 
-                <!-- Email -->
-                <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
-                    @error('email')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <!-- Class -->
                 <div class="mb-3">
                     <label class="form-label">Class</label>
-                    <input type="text" name="class_name" class="form-control @error('class_name') is-invalid @enderror" value="{{ old('class_name', request('class_name')) }}" required>
-                    @error('class_name')
+                    <select name="school_class_id" class="form-select @error('school_class_id') is-invalid @enderror" required>
+                        <option value="">-- Select Class and Section --</option>
+                        @foreach($classes as $class)
+                            <option value="{{ $class->id }}" @selected(old('school_class_id', $selectedClassId) == $class->id)>
+                                {{ $class->class_label }} (Section {{ $class->section }})
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('school_class_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Section</label>
-                    <input type="text" name="section" class="form-control @error('section') is-invalid @enderror" value="{{ old('section', request('section')) }}">
-                    @error('section')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="mb-3">
@@ -75,13 +67,32 @@
                     </select>
                 </div>
 
-                <!-- Subject -->
                 <div class="mb-3">
-                    <label class="form-label">Subject</label>
-                    <input type="text" name="subject" class="form-control @error('subject') is-invalid @enderror" value="{{ old('subject') }}" placeholder="E.g. Mathematics">
-                    @error('subject')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                    <fieldset>
+                        <legend class="form-label">Subjects <span class="text-muted fw-normal">(optional)</span></legend>
+                        <div class="row">
+                            @foreach($subjects as $subjectSlug => $subjectName)
+                                <div class="col-sm-6">
+                                    <div class="form-check mb-2">
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            name="subjects[]"
+                                            id="subject-{{ $subjectSlug }}"
+                                            value="{{ $subjectName }}"
+                                            @checked(in_array($subjectName, (array) old('subjects', []), true))
+                                        >
+                                        <label class="form-check-label" for="subject-{{ $subjectSlug }}">{{ $subjectName }}</label>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </fieldset>
+                    @foreach($errors->getMessages() as $key => $messages)
+                        @if($key === 'subjects' || str_starts_with($key, 'subjects.'))
+                            <div class="text-danger small">{{ $messages[0] }}</div>
+                        @endif
+                    @endforeach
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100 fw-bold py-2">Save Student</button>

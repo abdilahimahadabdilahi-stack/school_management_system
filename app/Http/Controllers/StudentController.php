@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SchoolClass;
 use App\Models\SchoolParent;
 use App\Models\Student;
+use App\Models\Subject;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class StudentController extends Controller
 {
@@ -31,9 +34,27 @@ class StudentController extends Controller
     }
 
     // 2. Tusi form-ka ardayga cusub lagu daro
-    public function create()
+    public function create(Request $request)
     {
-        return view('students.create', ['parents' => SchoolParent::orderBy('name')->get()]);
+        $selectedClassId = $request->integer('school_class_id');
+
+        if ($selectedClassId === 0 && $request->filled('class_name')) {
+            $selectedClass = SchoolClass::query()
+                ->whereRaw('LOWER(class_label) = ?', [strtolower((string) $request->input('class_name'))])
+                ->when(
+                    $request->filled('section'),
+                    fn ($query) => $query->whereRaw('LOWER(section) = ?', [strtolower((string) $request->input('section'))]),
+                )
+                ->first();
+            $selectedClassId = $selectedClass?->id ?? 0;
+        }
+
+        return view('students.create', [
+            'parents' => SchoolParent::orderBy('name')->get(),
+            'classes' => SchoolClass::ordered()->get(),
+            'selectedClassId' => $selectedClassId ?: null,
+            'subjects' => Subject::CORE_SUBJECTS,
+        ]);
     }
 
     // 3. Keydi ardayga cusub
@@ -42,14 +63,18 @@ class StudentController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'age' => 'required|integer',
-            'email' => 'required|email|unique:students,email',
-            'class_name' => 'required|string|max:255',
+            'email' => 'nullable|email|unique:students,email',
+            'school_class_id' => ['nullable', 'integer', 'exists:school_classes,id'],
+            'class_name' => ['required_without:school_class_id', 'nullable', 'string', 'max:255'],
             'section' => 'nullable|string|max:255',
             'subject' => 'nullable|string|max:255',
+            'subject_selection_present' => ['sometimes', 'accepted'],
+            'subjects' => ['sometimes', 'array'],
+            'subjects.*' => ['string', 'distinct', Rule::in(array_values(Subject::CORE_SUBJECTS))],
             'parent_id' => 'nullable|exists:parents,id',
         ]);
 
-        Student::create($validated);
+        Student::create($this->studentAttributes($validated));
 
         return $this->redirectAfterChange($request)->with('success', 'Student added successfully!');
     }
@@ -67,8 +92,19 @@ class StudentController extends Controller
     {
         $student = Student::findOrFail($id);
         $parents = SchoolParent::orderBy('name')->get();
+        $classes = SchoolClass::ordered()->get();
 
-        return view('students.edit', compact('student', 'parents'));
+        $selectedSubjectNames = $student->subject === null
+            ? []
+            : array_map('trim', explode(',', $student->subject));
+
+        return view('students.edit', [
+            'student' => $student,
+            'parents' => $parents,
+            'classes' => $classes,
+            'subjects' => Subject::CORE_SUBJECTS,
+            'selectedSubjectNames' => $selectedSubjectNames,
+        ]);
     }
 
     // 6. Cusbooneysii (Update) xogta ardayga
@@ -79,14 +115,18 @@ class StudentController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'age' => 'required|integer',
-            'email' => 'required|email|unique:students,email,'.$id,
-            'class_name' => 'required|string|max:255',
+            'email' => 'nullable|email|unique:students,email,'.$id,
+            'school_class_id' => ['nullable', 'integer', 'exists:school_classes,id'],
+            'class_name' => ['required_without:school_class_id', 'nullable', 'string', 'max:255'],
             'section' => 'nullable|string|max:255',
             'subject' => 'nullable|string|max:255',
+            'subject_selection_present' => ['sometimes', 'accepted'],
+            'subjects' => ['sometimes', 'array'],
+            'subjects.*' => ['string', 'distinct', Rule::in(array_values(Subject::CORE_SUBJECTS))],
             'parent_id' => 'nullable|exists:parents,id',
         ]);
 
-        $student->update($validated);
+        $student->update($this->studentAttributes($validated));
 
         return $this->redirectAfterChange($request)->with('success', 'Xogta ardayga waa la cusbooneysiiyay!');
     }
@@ -120,5 +160,37 @@ class StudentController extends Controller
         }
 
         return redirect()->route('students.index');
+    }
+
+    /**
+     * Keep the legacy class label and section synchronized with the normalized class relation.
+     *
+     * @param  array<string, mixed>  $validated
+     * @return array<string, mixed>
+     */
+    private function studentAttributes(array $validated): array
+    {
+        $schoolClass = isset($validated['school_class_id'])
+            ? SchoolClass::findOrFail($validated['school_class_id'])
+            : (isset($validated['section']) && $validated['section'] !== ''
+                ? SchoolClass::query()
+                    ->whereRaw('LOWER(class_label) = ?', [strtolower((string) ($validated['class_name'] ?? ''))])
+                    ->whereRaw('LOWER(section) = ?', [strtolower($validated['section'])])
+                    ->first()
+                : null);
+
+        $attributes = array_merge($validated, [
+            'school_class_id' => $schoolClass?->id,
+            'class_name' => $schoolClass?->class_label ?? ($validated['class_name'] ?? ''),
+            'section' => $schoolClass?->section ?? ($validated['section'] ?? null),
+        ]);
+
+        if (array_key_exists('subject_selection_present', $validated)) {
+            $subjects = $validated['subjects'] ?? [];
+            $attributes['subject'] = $subjects === [] ? null : implode(', ', $subjects);
+            unset($attributes['subject_selection_present'], $attributes['subjects']);
+        }
+
+        return $attributes;
     }
 }

@@ -5,14 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Exam;
 use App\Models\ExamResult;
 use App\Models\Student;
+use App\Models\Subject;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 
 class ExamController extends Controller
 {
     private const PASS_THRESHOLD = 50;
+
+    private const ALL_SUBJECTS = 'All Subjects';
 
     // 1. Muuji dhammaan imtixaanaadka
     public function index(Request $request)
@@ -37,7 +41,9 @@ class ExamController extends Controller
     // 2. Foomka lagu daro imtixaan cusub
     public function create()
     {
-        return view('exams.create');
+        return view('exams.create', [
+            'subjects' => Subject::CORE_SUBJECTS,
+        ]);
     }
 
     // 3. Kaydi imtixaanka cusub
@@ -45,7 +51,10 @@ class ExamController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'subject' => 'required|string|max:255',
+            'subject' => ['required', 'string', Rule::in([
+                ...array_values(Subject::CORE_SUBJECTS),
+                self::ALL_SUBJECTS,
+            ])],
             'exam_type' => ['required', 'in:midterm,final'],
             'exam_date' => 'required|date',
             'start_time' => 'nullable',
@@ -130,7 +139,13 @@ class ExamController extends Controller
     // 5. Foomka wax ka beddelka (Edit)
     public function edit(Exam $exam)
     {
-        return view('exams.edit', compact('exam'));
+        $subjects = Subject::CORE_SUBJECTS;
+
+        if (! in_array($exam->subject, $subjects, true)) {
+            $subjects['legacy'] = $exam->subject;
+        }
+
+        return view('exams.edit', compact('exam', 'subjects'));
     }
 
     // 6. Cuddaysii/Update imtixaanka
@@ -138,7 +153,11 @@ class ExamController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'subject' => 'required|string|max:255',
+            'subject' => ['required', 'string', Rule::in([
+                ...array_values(Subject::CORE_SUBJECTS),
+                self::ALL_SUBJECTS,
+                $exam->subject,
+            ])],
             'exam_type' => ['required', 'in:midterm,final'],
             'exam_date' => 'required|date',
             'start_time' => 'nullable',

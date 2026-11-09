@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" role="img" aria-labelledby="title description">
+    <title id="title">INTIFAAC PRIMARY SCHOOL</title>
+    <desc id="description">School seal with an open book, rising sun, and the motto Knowledge is Light.</desc>
+    <defs>
+        <path id="top-arc" d="M 75,320 A 245,245 0 0,1 565,320"/>
+        <path id="bottom-arc" d="M 85,385 A 245,245 0 0,0 555,385"/>
+    </defs>
+    <circle cx="320" cy="320" r="306" fill="#fff" stroke="#087443" stroke-width="12"/>
+    <circle cx="320" cy="320" r="286" fill="#102a4c" stroke="#fff" stroke-width="8"/>
+    <circle cx="320" cy="320" r="211" fill="#fff" stroke="#087443" stroke-width="9"/>
+    <text fill="#fff" font-family="Arial, sans-serif" font-size="35" font-weight="700" letter-spacing="2">
+        <textPath href="#top-arc" startOffset="50%" text-anchor="middle">INTIFAAC PRIMARY SCHOOL</textPath>
+    </text>
+    <path d="M36 444 Q320 330 604 444 L604 550 Q320 647 36 550Z" fill="#087443" stroke="#fff" stroke-width="8"/>
+    <text fill="#fff" font-family="Arial, sans-serif" font-size="32" font-weight="700" letter-spacing="2">
+        <textPath href="#bottom-arc" startOffset="50%" text-anchor="middle">KNOWLEDGE IS LIGHT</textPath>
+    </text>
+    <circle cx="320" cy="306" r="58" fill="#087443"/>
+    <g stroke="#087443" stroke-linecap="round" stroke-width="12">
+        <path d="M320 217v-38M270 231l-20-32M370 231l20-32M231 270l-32-20M409 270l32-20"/>
+    </g>
+    <path d="M177 344c53-29 102-23 143 7v112c-42-31-90-37-143-8z" fill="#102a4c"/>
+    <path d="M463 344c-53-29-102-23-143 7v112c42-31 90-37 143-8z" fill="#102a4c"/>
+    <path d="M320 351v112" fill="none" stroke="#087443" stroke-width="8"/>
+    <path d="M282 463c12-41 31-63 56-75-3 33-15 58-38 78 35-18 55-16 74-8-28 19-58 26-92 20z" fill="#087443"/>
+</svg>

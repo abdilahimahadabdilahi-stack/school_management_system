@@ -15,6 +15,7 @@ use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -81,8 +82,24 @@ class ReportController extends Controller
 
         return view('reports.show', [
             'report' => $definition,
+            'reportSlug' => $report,
             'records' => $records,
             'search' => $search,
         ]);
+    }
+
+    public function destroy(Request $request, User $user): RedirectResponse
+    {
+        if ($request->user()->is($user)) {
+            return redirect()
+                ->route('reports.show', 'users')
+                ->with('error', 'You cannot delete your own account.');
+        }
+
+        $user->delete();
+
+        return redirect()
+            ->route('reports.show', 'users')
+            ->with('success', 'User deleted successfully.');
     }
 }

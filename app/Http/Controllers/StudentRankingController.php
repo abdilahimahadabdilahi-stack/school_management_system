@@ -19,10 +19,7 @@ class StudentRankingController extends Controller
             'class_id' => ['nullable', 'integer', Rule::exists('school_classes', 'id')],
         ]);
 
-        $classes = SchoolClass::query()
-            ->orderBy('class_number')
-            ->orderBy('section')
-            ->get();
+        $classes = SchoolClass::ordered()->get();
         $selectedClass = isset($validated['class_id'])
             ? SchoolClass::findOrFail((int) $validated['class_id'])
             : null;

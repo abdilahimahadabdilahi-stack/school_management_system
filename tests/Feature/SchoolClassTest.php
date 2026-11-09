@@ -15,7 +15,7 @@ class SchoolClassTest extends TestCase
 
     public function test_classes_are_listed_as_separate_class_pages(): void
     {
-        $user = User::factory()->create(['role' => 'teacher']);
+        $user = User::factory()->create(['role' => 'admin']);
         $firstClass = SchoolClass::create([
             'class_number' => 1,
             'section' => 'A',
@@ -38,7 +38,7 @@ class SchoolClassTest extends TestCase
 
     public function test_a_new_section_can_be_added_to_an_existing_class_level(): void
     {
-        $user = User::factory()->create(['role' => 'teacher']);
+        $user = User::factory()->create(['role' => 'admin']);
 
         $response = $this->actingAs($user)->post(route('classes.store'), [
             'class_number' => 1,
@@ -56,7 +56,7 @@ class SchoolClassTest extends TestCase
 
     public function test_class_subjects_can_be_assigned_optionally(): void
     {
-        $user = User::factory()->create(['role' => 'teacher']);
+        $user = User::factory()->create(['role' => 'admin']);
         $subject = Subject::where('slug', 'mathematics')->firstOrFail();
 
         $response = $this->actingAs($user)->post(route('classes.store'), [
@@ -74,7 +74,7 @@ class SchoolClassTest extends TestCase
 
     public function test_class_subject_assignments_can_be_cleared_from_the_edit_form(): void
     {
-        $user = User::factory()->create(['role' => 'teacher']);
+        $user = User::factory()->create(['role' => 'admin']);
         $schoolClass = SchoolClass::create([
             'class_number' => 3,
             'section' => 'A',
@@ -103,7 +103,7 @@ class SchoolClassTest extends TestCase
 
     public function test_class_page_only_displays_students_from_that_class(): void
     {
-        $user = User::factory()->create(['role' => 'teacher']);
+        $user = User::factory()->create(['role' => 'admin']);
         $schoolClass = SchoolClass::create([
             'class_number' => 2,
             'section' => 'A',
@@ -130,7 +130,7 @@ class SchoolClassTest extends TestCase
 
     public function test_class_directory_count_matches_the_students_on_class_page(): void
     {
-        $user = User::factory()->create(['role' => 'teacher']);
+        $user = User::factory()->create(['role' => 'admin']);
         $schoolClass = SchoolClass::create([
             'class_number' => 3,
             'section' => 'A',
@@ -155,5 +155,34 @@ class SchoolClassTest extends TestCase
         $showResponse->assertViewHas('schoolClass', function (SchoolClass $loadedClass): bool {
             return $loadedClass->students->count() === 3;
         });
+    }
+
+    public function test_updating_a_class_keeps_enrolled_students_class_details_in_sync(): void
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $schoolClass = SchoolClass::create([
+            'class_number' => 4,
+            'section' => 'A',
+            'class_label' => '4A',
+            'capacity' => 40,
+        ]);
+        $student = Student::factory()->create([
+            'school_class_id' => $schoolClass->id,
+            'class_name' => $schoolClass->class_label,
+            'section' => $schoolClass->section,
+        ]);
+
+        $this->actingAs($user)->put(route('classes.update', $schoolClass), [
+            'class_type' => 'primary',
+            'class_number' => 4,
+            'section' => 'C',
+            'capacity' => 40,
+        ])->assertRedirect(route('classes.index'));
+
+        $this->assertDatabaseHas('students', [
+            'id' => $student->id,
+            'class_name' => '4C',
+            'section' => 'C',
+        ]);
     }
 }

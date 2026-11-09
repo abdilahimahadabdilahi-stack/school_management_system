@@ -15,7 +15,7 @@ class StudentClassSynchronizationTest extends TestCase
 
     public function test_updated_student_details_match_on_the_student_list_and_class_roster(): void
     {
-        $user = User::factory()->create(['role' => 'teacher']);
+        $user = User::factory()->create(['role' => 'admin']);
         $oldClass = SchoolClass::create([
             'class_number' => 4,
             'section' => 'A',

@@ -21,6 +21,7 @@ class Student extends Model
 
     protected $fillable = [
         'parent_id',
+        'school_class_id',
         'name',
         'age',
         'email',
@@ -32,6 +33,11 @@ class Student extends Model
     public function parent(): BelongsTo
     {
         return $this->belongsTo(SchoolParent::class, 'parent_id');
+    }
+
+    public function schoolClass(): BelongsTo
+    {
+        return $this->belongsTo(SchoolClass::class, 'school_class_id');
     }
 
     public function attendances(): HasMany
@@ -52,6 +58,11 @@ class Student extends Model
     public function examResults(): HasMany
     {
         return $this->hasMany(ExamResult::class);
+    }
+
+    public function kgEvaluations(): HasMany
+    {
+        return $this->hasMany(KgEvaluation::class);
     }
 
     public function scopeWithExamPerformance(Builder $query): Builder

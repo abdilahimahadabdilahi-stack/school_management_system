@@ -10,7 +10,7 @@
         <div class="row align-items-center position-relative" style="z-index: 2;">
             <div class="col-lg-8">
                 <span class="badge bg-primary bg-opacity-20 text-primary-light px-3 py-2 rounded-pill fw-semibold mb-3 border border-primary border-opacity-20" style="font-size: 0.8rem;">
-                    <i class="fa-solid fa-shield-halved me-1"></i> Alhuda Primary and Intermediate School
+                    <i class="fa-solid fa-shield-halved me-1"></i> INTIFAAC PRIMARY SCHOOL
                 </span>
                 <h1 class="display-6 fw-bold mb-2">Welcome back, {{ Auth::user()->name }}!</h1>
             </div>
@@ -24,26 +24,30 @@
 
     <div class="row g-3 mb-4">
         <!-- Students Card -->
-        <div class="col-6 col-md-4 col-xl-3">
-            <div class="card stat-card p-3 border-start border-4 border-primary">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div>
-                        <span class="text-muted small fw-semibold">Students</span>
-                        <h2 class="fw-bold text-slate-900 m-0 mt-1">{{ $students_count ?? 0 }}</h2>
-                    </div>
-                    <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3">
-                        <i class="fa-solid fa-user-graduate fs-4"></i>
+        @auth
+            @if(in_array(Auth::user()->role, ['admin', 'manager']))
+                <div class="col-6 col-md-4 col-xl-3">
+                    <div class="card stat-card p-3 border-start border-4 border-primary">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <span class="text-muted small fw-semibold">Students</span>
+                                <h2 class="fw-bold text-slate-900 m-0 mt-1">{{ $students_count ?? 0 }}</h2>
+                            </div>
+                            <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3">
+                                <i class="fa-solid fa-user-graduate fs-4"></i>
+                            </div>
+                        </div>
+                        <hr class="my-2 opacity-10">
+                        <a href="{{ route('students.index') }}" class="text-primary text-decoration-none small fw-semibold d-flex align-items-center justify-content-between">
+                            <span>Manage Students</span> <i class="fa-solid fa-arrow-right fs-6"></i>
+                        </a>
+                        <a href="{{ route('students.unpaid') }}" class="text-danger text-decoration-none small fw-semibold d-flex align-items-center justify-content-between mt-2">
+                            <span>Unpaid Fees Report</span> <i class="fa-solid fa-arrow-right fs-6"></i>
+                        </a>
                     </div>
                 </div>
-                <hr class="my-2 opacity-10">
-                <a href="{{ route('students.index') }}" class="text-primary text-decoration-none small fw-semibold d-flex align-items-center justify-content-between">
-                    <span>Manage Students</span> <i class="fa-solid fa-arrow-right fs-6"></i>
-                </a>
-                <a href="{{ route('students.unpaid') }}" class="text-danger text-decoration-none small fw-semibold d-flex align-items-center justify-content-between mt-2">
-                    <span>Unpaid Fees Report</span> <i class="fa-solid fa-arrow-right fs-6"></i>
-                </a>
-            </div>
-        </div>
+            @endif
+        @endauth
 
         <!-- Teachers Card -->
         @auth
@@ -107,23 +111,27 @@
         @endauth
 
         <!-- Classes Card -->
-        <div class="col-6 col-md-4 col-xl-3">
-            <div class="card stat-card p-3 border-start border-4 border-secondary">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div>
-                        <span class="text-muted small fw-semibold">Classes</span>
-                        <h2 class="fw-bold text-slate-900 m-0 mt-1">{{ $classes_count ?? 0 }}</h2>
-                    </div>
-                    <div class="bg-secondary bg-opacity-10 text-secondary p-3 rounded-3">
-                        <i class="fa-solid fa-school fs-4"></i>
+        @auth
+            @if(in_array(Auth::user()->role, ['admin', 'manager']))
+                <div class="col-6 col-md-4 col-xl-3">
+                    <div class="card stat-card p-3 border-start border-4 border-secondary">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <span class="text-muted small fw-semibold">Classes</span>
+                                <h2 class="fw-bold text-slate-900 m-0 mt-1">{{ $classes_count ?? 0 }}</h2>
+                            </div>
+                            <div class="bg-secondary bg-opacity-10 text-secondary p-3 rounded-3">
+                                <i class="fa-solid fa-school fs-4"></i>
+                            </div>
+                        </div>
+                        <hr class="my-2 opacity-10">
+                        <a href="{{ route('classes.index') }}" class="text-secondary text-decoration-none small fw-semibold d-flex align-items-center justify-content-between">
+                            <span>Manage Classes</span> <i class="fa-solid fa-arrow-right fs-6"></i>
+                        </a>
                     </div>
                 </div>
-                <hr class="my-2 opacity-10">
-                <a href="{{ route('classes.index') }}" class="text-secondary text-decoration-none small fw-semibold d-flex align-items-center justify-content-between">
-                    <span>Manage Classes</span> <i class="fa-solid fa-arrow-right fs-6"></i>
-                </a>
-            </div>
-        </div>
+            @endif
+        @endauth
 
         <!-- Exams Card -->
         <div class="col-6 col-md-4 col-xl-3">
@@ -232,11 +240,23 @@
                             @endif
                         @endauth
 
-                        <a href="{{ route('students.create') }}" class="btn btn-outline-primary text-start p-3 rounded-3 d-flex align-items-center">
-                            <i class="fa-solid fa-user-plus fs-5 me-3"></i>
+                        @auth
+                            @if(in_array(Auth::user()->role, ['admin', 'manager']))
+                                <a href="{{ route('students.create') }}" class="btn btn-outline-primary text-start p-3 rounded-3 d-flex align-items-center">
+                                    <i class="fa-solid fa-user-plus fs-5 me-3"></i>
+                                    <div>
+                                        <div class="fw-bold">Add New Student</div>
+                                        <small class="text-muted">Enroll a new student</small>
+                                    </div>
+                                </a>
+                            @endif
+                        @endauth
+
+                        <a href="{{ route('kg-evaluations.index') }}" class="btn btn-outline-success text-start p-3 rounded-3 d-flex align-items-center">
+                            <i class="fa-solid fa-seedling fs-5 me-3"></i>
                             <div>
-                                <div class="fw-bold">Add New Student</div>
-                                <small class="text-muted">Enroll a new student</small>
+                                <div class="fw-bold">KG Progress Reports</div>
+                                <small class="text-muted">Record skill-based kindergarten progress</small>
                             </div>
                         </a>
                     </div>
