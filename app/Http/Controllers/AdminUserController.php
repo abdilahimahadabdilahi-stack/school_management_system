@@ -22,7 +22,7 @@ class AdminUserController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'role' => ['required', 'string', 'in:admin,teacher'],
+            'role' => ['required', 'string', 'in:admin,teacher,staff'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 

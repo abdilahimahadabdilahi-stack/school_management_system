@@ -1,12 +1,12 @@
 @extends('layouts.app-bs')
 
-@section('title', 'Register Admin or Teacher')
+@section('title', 'Register Admin, Teacher, or Staff')
 
 @section('content')
 <div class="container py-4" style="max-width: 720px;">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
-            <h4 class="mb-0 fw-bold">Register Admin or Teacher</h4>
+            <h4 class="mb-0 fw-bold">Register Admin, Teacher, or Staff</h4>
         </div>
         <div class="card-body p-4">
             @if(session('success'))
@@ -38,6 +38,7 @@
                         <option value="">Select a role</option>
                         <option value="admin" @selected(old('role') === 'admin')>Admin</option>
                         <option value="teacher" @selected(old('role') === 'teacher')>Teacher</option>
+                        <option value="staff" @selected(old('role') === 'staff')>Staff</option>
                     </select>
                     @error('role')
                         <div class="invalid-feedback">{{ $message }}</div>

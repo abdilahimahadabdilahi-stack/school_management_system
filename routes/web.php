@@ -71,6 +71,11 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::middleware(['role:admin'])->group(function () {
+        Route::get('/admin/users/create', [AdminUserController::class, 'create'])->name('admin-users.create');
+        Route::post('/admin/users', [AdminUserController::class, 'store'])->name('admin-users.store');
+    });
+
     Route::middleware(['role:admin,manager'])->group(function () {
         Route::get('/students/unpaid', [UnpaidStudentsController::class, 'index'])->name('students.unpaid');
         Route::resource('students', StudentController::class);
@@ -121,11 +126,6 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('managers', ManagerController::class);
         Route::resource('parents', ParentController::class);
         Route::resource('payments', PaymentController::class);
-
-        Route::middleware(['role:admin'])->group(function () {
-            Route::get('/admin/users/create', [AdminUserController::class, 'create'])->name('admin-users.create');
-            Route::post('/admin/users', [AdminUserController::class, 'store'])->name('admin-users.store');
-        });
 
         // Reports Routes
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');

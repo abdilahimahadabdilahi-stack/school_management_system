@@ -136,16 +136,6 @@
             <button type="submit" class="w-full text-white btn-animate">
                 <i class="fa-solid fa-right-to-bracket me-2"></i> {{ __('Log in') }}
             </button>
-
-            <!-- Register Link -->
-            @if (Route::has('register'))
-                <div class="text-center mt-4">
-                    <span class="text-sm text-gray-600">Akaunti ma lehid?</span>
-                    <a href="{{ route('register') }}" class="text-sm text-indigo-600 font-semibold hover:underline ms-1">
-                        Register Hada
-                    </a>
-                </div>
-            @endif
         </form>
     </div>
 </x-guest-layout>

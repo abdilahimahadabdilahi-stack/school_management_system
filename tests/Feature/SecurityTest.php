@@ -70,7 +70,7 @@ class SecurityTest extends TestCase
             ->assertDontSee('Manage Students')
             ->assertDontSee('Manage Classes')
             ->assertDontSee('Add New Student')
-            ->assertDontSee('Register Admin / Teacher');
+            ->assertDontSee('Register Admin / Teacher / Staff');
     }
 
     public function test_dashboard_displays_the_configured_system_version(): void

@@ -387,7 +387,7 @@
                     @if(Auth::user()->role === 'admin')
                         <li class="{{ request()->routeIs('admin-users.*') ? 'active' : '' }}">
                             <a href="{{ route('admin-users.create') }}">
-                                <i class="fa-solid fa-user-shield"></i> <span>Register Admin / Teacher</span>
+                                <i class="fa-solid fa-user-shield"></i> <span>Register Admin / Teacher / Staff</span>
                             </a>
                         </li>
                     @endif

@@ -140,12 +140,6 @@
                                 <i class="fa-solid fa-right-to-bracket me-1"></i> Log in
                             </a>
                         @endif
-
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="btn btn-sm btn-primary fw-bold">
-                                <i class="fa-solid fa-user-plus me-1"></i> Register
-                            </a>
-                        @endif
                     @endguest
                 </div>
             </div>
